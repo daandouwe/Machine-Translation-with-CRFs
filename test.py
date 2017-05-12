@@ -1,85 +1,93 @@
-import libitg
-from libitg import Symbol, Terminal, Nonterminal, Span
-from libitg import Rule, CFG
-from libitg import FSA
-from collections import defaultdict
-import numpy as np
-from features import *
-from processing import *
-from inside_outside import *
+# import cPickle as pickle
+import pickle
 
+def save_parses(corpus, savepath):
+    """
+    Parses all sentences in corpus and saves a triple of needed ones in (huge) dictionary
+    indexed by sentence number in corpus as pkl object at savepath.
 
-ch_en, en_ch, full_en_ch, full_ch_en = preprocess_lexicon()
-corpus = read_data()
+    :corpus: a list of tuples [(chinese sentence, english sentence)] 
+    :saves: parse_dict: sentence number -> (target_forest, ref_forest, scr_fsa)   
+    """
+    parse_dict = dict() 
+    for i, (ch_sent, en_sent) in enumerate(corpus):
+        lexicon = make_lexicon(ch_sent, ch_en, en_ch)
 
-ch_sent, en_sent = corpus[1]
-print(ch_sent)
-print(en_sent)
-lexicon = make_lexicon(ch_sent, ch_en, en_ch)
-#     lexicon = make_lexicon_ALT(ch_sent, en_sent)
+        src_fsa = libitg.make_fsa(ch_sent)
+        src_cfg = libitg.make_source_side_itg(lexicon)
+        forest = libitg.earley(src_cfg, src_fsa, 
+                               start_symbol=Nonterminal('S'), 
+                               sprime_symbol=Nonterminal("D(x)"))
 
-print(lexicon)
-src_fsa = libitg.make_fsa(ch_sent)
-print(src_fsa)
-src_cfg = libitg.make_source_side_itg(lexicon)
-print(src_cfg)
-forest = libitg.earley(src_cfg, src_fsa, 
-                       start_symbol=Nonterminal('S'), 
-                       sprime_symbol=Nonterminal("D(x)"))
-print('forest: {}'.format(len(forest)))
+        projected_forest = libitg.make_target_side_itg(forest, lexicon)
 
-projected_forest = libitg.make_target_side_itg(forest, lexicon)
-print('projected forest: {}'.format(len(projected_forest)))
-tgt_fsa = libitg.make_fsa(en_sent)
-print(tgt_fsa)
-ref_forest = libitg.earley(projected_forest, tgt_fsa, 
-                           start_symbol=Nonterminal("D(x)"), 
-                           sprime_symbol=Nonterminal('D(x,y)'),
-                           eps_symbol=Nonterminal('-EPS-'))
+        tgt_fsa = libitg.make_fsa(en_sent)
+        ref_forest = libitg.earley(projected_forest, tgt_fsa, 
+                                   start_symbol=Nonterminal("D(x)"), 
+                                   sprime_symbol=Nonterminal('D(x,y)'))
 
-# NOTE: if lexicon does not contain the right translations with respect to the observed sentence y
-# then ref_forest will be empty! See example above where we replaced `chien` with `chat`.
+        length_fsa = libitg.LengthConstraint(len(en_sent), strict=False)
 
-print('ref forest: {}'.format(len(ref_forest)))
-print('pass1')
-length_fsa = libitg.LengthConstraint(len(en_sent), strict=False)
-print('pass2')
+        target_forest = libitg.earley(projected_forest, length_fsa, 
+                                      start_symbol=Nonterminal("D(x)"), 
+                                      sprime_symbol=Nonterminal("D_n(x)"))
+        
+        parse_dict[i] = (target_forest, ref_forest, src_fsa)
+    
+    f = open(savepath + 'parse_dict.pkl', 'wb')
+    pickle.dump(parse_dict, f, protocol=4)
+    f.close()
 
-target_forest = libitg.earley(projected_forest, length_fsa, 
-                              start_symbol=Nonterminal("D(x)"), 
-                              sprime_symbol=Nonterminal("D_n(x)"))
-print('target forest: {}'.format(len(target_forest)))
-print('pass3')
+def save_parses_separate(corpus, savepath):
+    """
+    For each sentence k in corpus we parse and save the triple of needed parses 
+    as pkl object at savepath/parses-k.pkl.
 
-# target_forest_as_fsa = libitg.forest_to_fsa(target_forest, Nonterminal('D_n(x)'))    
-# candidates = libitg.enumerate_paths_in_fsa(target_forest_as_fsa)  
-# print(len(candidates))
-# for candidate in sorted(candidates)[0:10]:
-#     print(candidate)    
+    :corpus: a list of tuples [(chinese sentence, english sentence)] 
+    :saves: parses-k = (target_forest, ref_forest, scr_fsa) for each k in 0,..,len(corpus)
+    """
+    for k, (ch_sent, en_sent) in enumerate(corpus):
+        lexicon = make_lexicon(ch_sent, ch_en, en_ch)
 
+        src_fsa = libitg.make_fsa(ch_sent)
+        src_cfg = libitg.make_source_side_itg(lexicon)
+        forest = libitg.earley(src_cfg, src_fsa, 
+                               start_symbol=Nonterminal('S'), 
+                               sprime_symbol=Nonterminal("D(x)"))
 
-# D_n(x)
-tsort = top_sort(target_forest)
-edge_weights = defaultdict(lambda:1)
-root = Nonterminal("D_n(x)")
+        projected_forest = libitg.make_target_side_itg(forest, lexicon)
 
-edge2fmap, fset = featurize_edges(target_forest, src_fsa,
-                                    sparse_del=False, sparse_ins=False, sparse_trans=False)
+        tgt_fsa = libitg.make_fsa(en_sent)
+        ref_forest = libitg.earley(projected_forest, tgt_fsa, 
+                                   start_symbol=Nonterminal("D(x)"), 
+                                   sprime_symbol=Nonterminal('D(x,y)'))
 
-I = inside_algorithm(target_forest, tsort, edge_weights)
-O = outside_algorithm(target_forest, tsort, edge_weights, I, root)
+        length_fsa = libitg.LengthConstraint(len(en_sent), strict=False)
 
-expected_features_Dn_x = expected_feature_vector(target_forest, I, O, edge2fmap)
+        target_forest = libitg.earley(projected_forest, length_fsa, 
+                                      start_symbol=Nonterminal("D(x)"), 
+                                      sprime_symbol=Nonterminal("D_n(x)"))
+        
+        parses = (target_forest, ref_forest, src_fsa)
+        
+        f = open(savepath + 'parses-{}.pkl'.format(k), 'wb')
+        pickle.dump(parses, f, protocol=4)
+        f.close()
+    
+def load_parses(savepath):
+    """
+    Loads and returns a parse_dict as saved by load_parses.
+    """
+    f = open(savepath + 'parse_dict.pkl', 'rb')
+    parse_dict = pickle.load(f)
+    f.close()
+    return parse_dict
 
-# D(x,y)
-tsort = top_sort(ref_forest)
-edge_weights = defaultdict(lambda:1)
-root = Nonterminal("D(x,y)")
-
-edge2fmap, fset = featurize_edges(ref_forest, src_fsa,
-                                    sparse_del=False, sparse_ins=False, sparse_trans=False)
-
-I = inside_algorithm(ref_forest, tsort, edge_weights)
-O = outside_algorithm(ref_forest, tsort, edge_weights, I, root)
-
-expected_features_D_xy = expected_feature_vector(ref_forest, I, O, edge2fmap) 
+def load_parses_separate(savepath, k):
+    """
+    Loads and returns parses as saved by load_parses_separate
+    """
+    f = open(savepath + 'parses-{k}.pkl', 'rb')
+    parses = pickle.load(f)
+    f.close()
+    return parses
