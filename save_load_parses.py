@@ -90,5 +90,5 @@ def load_parses_separate(savepath, k):
     f.close()
     return parses
 
-corpus = read_data(max_sents=3)
-save_parses_separate(corpus[:3], '../parses/')
+corpus = read_data(max_sents=100)
+save_parses_separate(corpus[:100], '../parses/')
