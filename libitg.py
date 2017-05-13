@@ -362,6 +362,7 @@ class FSA:
     def __init__(self):
         # each state is represented as a collection of outgoing arcs
         # which are organised in a dictionary mapping a label to a destination state
+        self.sent = str 
         self._states = []  # here we map from origin to label to destination
         self._initial = set()
         self._final = set()
@@ -446,6 +447,7 @@ class FSA:
 def make_fsa(string: str) -> FSA:
     """Converts a sentence (string) to an FSA (labels are python str objects)"""
     fsa = FSA()
+    fsa.sent = string
     fsa.add_state(initial=True)
     for i, word in enumerate(string.split()):
         fsa.add_state()  # create a destination state 
