@@ -9,6 +9,9 @@ from features import *
 from processing import *
 from inside_outside import *
 
+# import cPickle as pickle
+import pickle
+
 def parse_forests(src_sent, tgt_sent, lexicon):
     """
     Parses the forests needed for epoch
@@ -27,7 +30,7 @@ def parse_forests(src_sent, tgt_sent, lexicon):
                                sprime_symbol=Nonterminal('D(x,y)'),
                                eps_symbol=Nonterminal('-EPS-'))
     
-    length_fsa = libitg.LengthConstraint(len(tgt_sent), strict=False)
+    length_fsa = libitg.LengthConstraint(len(src_sent.split()), strict=False)
     target_forest = libitg.earley(projected_forest, length_fsa, 
                                   start_symbol=Nonterminal("D(x)"), 
                                   sprime_symbol=Nonterminal("D_n(x)"))
