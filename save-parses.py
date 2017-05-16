@@ -9,6 +9,9 @@ from features import featurize_edges, get_full_fset
 # Saving the parses of a small number given a lexicon, which we also save.
 # ########################################################################
 
+
+#### CORPUS AND TRANSLATIONS ####
+
 # get translations
 ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)
 # ch_en, en_ch, _, _ = translations_ALT(path='data/lexicon', k=3, null=3, remove_punct=True)
@@ -22,7 +25,9 @@ short_corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 5]
 print('\n'.join(map(str,short_corpus)))
 print(len(short_corpus))
 
-### PARSES ###
+
+
+#### PARSES ####
 
 # make lexicons for sentences in short corpus
 lexicons = [make_lexicon(ch_sent, ch_en) for ch_sent, _ in short_corpus]
@@ -39,7 +44,8 @@ fset = get_full_fset(parses, ch_en, en_ch, sparse=True)
 print(len(fset))
 
 
-### SAVING ###
+
+#### SAVING ####
 
 savepath = '../parses/'
 

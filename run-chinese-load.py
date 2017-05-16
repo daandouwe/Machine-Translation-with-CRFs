@@ -36,5 +36,5 @@ print('corpus size: {}\n'.format(len(parses)))
 w_first = load_weights(savepath)
 
 # then continue training with w_first[-1] (w_first is a list) with a higher learning rate
-w_test, delta_ws = sgd_func_minibatch(5, 1, w_first, minibatch=parses, 
+w_test, delta_ws = sgd_func_minibatch(5, 1e-4, w_first, minibatch=parses[0:4], 
                                       sparse=True, bar=False, log=True, check_convergence=True)
