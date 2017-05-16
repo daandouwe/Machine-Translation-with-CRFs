@@ -28,3 +28,34 @@ def load_weights(savepath):
     weights = pickle.load(f)
     f.close()
     return weights
+
+def check_nan_inf(I_tgt, I_ref):
+    """
+    Checking for nan and inf
+    """
+    check_nan = [np.isnan(v) for v in I_tgt.values()]
+    check_nan_log = [np.isnan(np.log(v)) for v in I_tgt.values()]
+#             print(check_nan_log)
+#             print(sum(check_nan_log))
+    if np.sum(check_nan):
+        # early stopping if we get nan
+        print('Early stop due to nan in I_tgt tgt_edge_weights')
+        print(I_tgt.values())
+        print([np.log(v) for v in I_tgt.values()])
+        return ws, delta_ws
+    check_inf = [np.isinf(v) for v in I_tgt.values()]
+    if np.sum(check_inf):
+        # early stopping if we get inf
+        print('Early stop due to inf in I_tgt')
+        return ws, delta_ws
+    # checking for nan and inf 
+    check_nan = [np.isnan(v) for v in I_ref.values()]
+    if np.sum(check_nan):
+        # early stopping if we get nan
+        print('Early stop due to nan in I_ref')
+        return ws, delta_ws
+    check_inf = [np.isinf(v) for v in I_ref.values()]
+    if np.sum(check_inf):
+        # early stopping if we get inf
+        print('Early stop due to inf in I_ref')
+        return ws, delta_ws
