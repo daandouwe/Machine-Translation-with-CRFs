@@ -1,7 +1,7 @@
 import libitg
 from libitg import Symbol, Terminal, Nonterminal, Span
 from libitg import Rule, CFG
-from collections import defaultdict
+from collections import defaultdict, deque
 import numpy as np
 
 def top_sort(forest: CFG) -> list:
@@ -52,6 +52,27 @@ def outside_algorithm(forest: CFG, tsort: list, edge_weights: dict, inside: dict
                 k = edge_weights[edge] * O[symbol]
                 for s in edge.rhs:
                     if not u == s:
-                        k *= I[s] # TODO: change to log-sum-exp
+                        k *= inside[s] # TODO: change to log-sum-exp
                 O[u] += k
     return O
+
+
+def viterbi(forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Symbol) -> dict:
+    """Returns the viterbi decoding of hypergraph"""
+    Q = deque([root])
+    V = list()
+    while Q:
+        symbol = Q.popleft()
+        incoming = forest.get(symbol)
+        weights = [0.0]*len(incoming)
+        for i, edge in enumerate(incoming):
+            weights[i] = edge_weights[edge]
+            for u in edge.rhs: # u in tail(e)
+                weights[i] *= inside[u] # TODO: change to log-sum-exp
+        weight, selected = max(zip(weights, incoming), key=lambda xy: xy[0])
+        for sym in selected.rhs:
+            if not sym.is_terminal():
+                Q.append(sym)
+        V.append(selected)    
+    return V
+

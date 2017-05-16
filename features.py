@@ -2,15 +2,17 @@ import libitg
 from libitg import Symbol, Terminal, Nonterminal, Span
 from libitg import Rule, CFG
 from libitg import FSA
-from inside_outside import *
+from graph import *
 from collections import defaultdict
 import numpy as np
+
 
 def get_terminal_string(symbol: Symbol):
     """Returns the python string underlying a certain terminal (thus unwrapping all span annotations)"""
     if not symbol.is_terminal():
         raise ValueError('I need a terminal, got %s of type %s' % (symbol, type(symbol)))
     return symbol.root().obj()
+
 
 def get_bispans(symbol: Span):
     """
@@ -28,10 +30,11 @@ def get_bispans(symbol: Span):
     _, start1, end1 = s.obj()  # this unwraps the source annotation
     return (start1, end1), (start2, end2)
 
+
 def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'), 
                     sparse_del=False, sparse_ins=False, sparse_trans=False,
-                   ch_en=defaultdict(lambda:defaultdict()), 
-                   en_ch=defaultdict(lambda:defaultdict())) -> dict:
+                   src_tgt=defaultdict(lambda:defaultdict(float)), 
+                   tgt_src=defaultdict(lambda:defaultdict(float))) -> dict:
     """
     Featurises an edge given
         * rule and spans
@@ -92,7 +95,7 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                 fmap['type:deletion'] += 1.0
                 fset.add('type:deletion')
                 # dense versions (for initial development phase)
-                fmap['ibm1:del:logprob'] += np.log(en_ch[src_word]['<NULL>'])
+                fmap['ibm1:del:logprob'] += tgt_src[src_word]['<NULL>']
                 
                 # sparse version
                 if sparse_del:
@@ -103,7 +106,7 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                     fmap['type:insertion'] += 1.0
                     fset.add('type:insertion')
                     # dense version
-                    fmap['ibm1:ins:logprob'] += np.log(ch_en['<NULL>'][tgt_word])
+                    fmap['ibm1:ins:logprob'] += src_tgt['<NULL>'][tgt_word]
                     
                     # sparse version
                     if sparse_ins:
@@ -113,8 +116,8 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                     fmap['type:translation'] += 1.0
                     fset.add('type:translation')
                     # dense version
-                    fmap['ibm1:x2y:logprob'] += np.log(ch_en[src_word][tgt_word])  # y is english word 
-                    fmap['ibm1:y2x:logprob'] += np.log(en_ch[tgt_word][src_word])
+                    fmap['ibm1:x2y:logprob'] += src_tgt[src_word][tgt_word]  # y is english word 
+                    fmap['ibm1:y2x:logprob'] += tgt_src[tgt_word][src_word]
                     
                     # sparse version                    
                     if sparse_trans:
@@ -148,8 +151,28 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
 
     return fmap, fset
 
+
+def get_full_fset(parses, src_tgt, tgt_src, sparse=False):
+    """
+    Returns the full feature set of target_forest and ref_forest together in one set
+
+    :param parses: a set of parses format [(tgt_forest, ref_forest, src_fsa)]
+    :param src_tgt: a dictionary with translation probabilities src_tgt[scr_word][tgt_word] = p(tgt_word|src_word)
+    :param tgt_src: a dictionary with translation probabilities tgt_tgt[tgt_word][src_word] = p(src_word|tgt_word)
+    :returns fset: a the set of all features used in all of the forests in `parses` together in one set
+    """
+    fset = set()
+    for tgt_forest, ref_forest, src_fsa in parses:
+        _, fset1 = featurize_edges(tgt_forest, src_fsa, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+        _, fset2 = featurize_edges(ref_forest, src_fsa, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+        fset.update(fset1 | fset2)
+    return fset
+
+
 def featurize_edges(forest, src_fsa, 
                     sparse_del=False, sparse_ins=False, sparse_trans=False,
+                    src_tgt=defaultdict(lambda:defaultdict(float)), 
+                    tgt_src=defaultdict(lambda:defaultdict(float)),
                     eps=Terminal('-EPS-')) -> dict:
     edge2fmap = defaultdict()
     fset_accum = set()
@@ -165,6 +188,7 @@ def weight_function(edge, fmap, wmap) -> float:
     for feature, value in fmap.items():
         dot += value * wmap[feature]
     return dot
+
 
 def expected_feature_vector(forest: CFG, inside: dict, outside: dict, edge_features: dict) -> dict:
     """Returns an expected feature vector (here a sparse python dictionary)"""

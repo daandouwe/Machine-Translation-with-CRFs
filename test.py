@@ -1,93 +1,88 @@
-# import cPickle as pickle
-import pickle
+import libitg as libitg
+import numpy as np
+from sgd import sgd_func_minibatch
+from collections import defaultdict
+from processing import parse_forests, make_lexicon, make_lexicon_ALT
+from features import featurize_edges, get_full_fset
 
-def save_parses(corpus, savepath):
-    """
-    Parses all sentences in corpus and saves a triple of needed ones in (huge) dictionary
-    indexed by sentence number in corpus as pkl object at savepath.
+lexicon = defaultdict(set)
+lexicon['le'].update(['the', '-EPS-'])  # we will assume that `le` can be deleted
+lexicon['-EPS-'].update(['a', 'the'])  # we will assume that `the` and `a` can be inserted
+lexicon['et'].add('and')
+lexicon['chien'].add('dog')
+lexicon['chat'].add('cat')
+lexicon['noir'].update(['black', 'dark'])  
+lexicon['blanc'].add('white')
+lexicon['rouge'].add('red')
+lexicon['petit'].update(['small', 'little'])
+lexicon['petite'].update(['small', 'little'])
 
-    :corpus: a list of tuples [(chinese sentence, english sentence)] 
-    :saves: parse_dict: sentence number -> (target_forest, ref_forest, scr_fsa)   
-    """
-    parse_dict = dict() 
-    for i, (ch_sent, en_sent) in enumerate(corpus):
-        lexicon = make_lexicon(ch_sent, ch_en, en_ch)
+sents = [('le chien noir', 'the black dog'),
+		 ('le petit chien', 'the small dog'),
+		 ('le petit chat', 'the small cat'),
+		 ('le petit chien noir', 'the little black dog'),
+		 ('le chat rouge', 'the red cat'),
+		 ('le chien rouge', 'the red dog'),
+		 ('le chat', 'the cat'),
+		 ('le chien', 'the dog'),
+		 ('rouge', 'red')]
 
-        src_fsa = libitg.make_fsa(ch_sent)
-        src_cfg = libitg.make_source_side_itg(lexicon)
-        forest = libitg.earley(src_cfg, src_fsa, 
-                               start_symbol=Nonterminal('S'), 
-                               sprime_symbol=Nonterminal("D(x)"))
+# make parses of sents based on lexicon
 
-        projected_forest = libitg.make_target_side_itg(forest, lexicon)
+parses = [parse_forests(fr, en, lexicon) for fr, en in sents]
 
-        tgt_fsa = libitg.make_fsa(en_sent)
-        ref_forest = libitg.earley(projected_forest, tgt_fsa, 
-                                   start_symbol=Nonterminal("D(x)"), 
-                                   sprime_symbol=Nonterminal('D(x,y)'))
+# make alternative parses
 
-        length_fsa = libitg.LengthConstraint(len(en_sent), strict=False)
+def make_ALT_lexicon(ALT_lexicons):
+	ALT_lexicon = defaultdict(set)
+	for lexicon in ALT_lexicons:
+		for fr, translations in lexicon.items():
+			ALT_lexicon[fr].update(translations)
+	return ALT_lexicon
 
-        target_forest = libitg.earley(projected_forest, length_fsa, 
-                                      start_symbol=Nonterminal("D(x)"), 
-                                      sprime_symbol=Nonterminal("D_n(x)"))
-        
-        parse_dict[i] = (target_forest, ref_forest, src_fsa)
-    
-    f = open(savepath + 'parse_dict.pkl', 'wb')
-    pickle.dump(parse_dict, f, protocol=4)
-    f.close()
+ALT_lexicons = [make_lexicon_ALT(fr, en) for fr, en in sents]
 
-def save_parses_separate(corpus, savepath):
-    """
-    For each sentence k in corpus we parse and save the triple of needed parses 
-    as pkl object at savepath/parses-k.pkl.
+ALT_lexicon = make_ALT_lexicon(ALT_lexicons)
 
-    :corpus: a list of tuples [(chinese sentence, english sentence)] 
-    :saves: parses-k = (target_forest, ref_forest, scr_fsa) for each k in 0,..,len(corpus)
-    """
-    for k, (ch_sent, en_sent) in enumerate(corpus):
-        lexicon = make_lexicon(ch_sent, ch_en, en_ch)
+ALT_parses = [parse_forests(fr, en, ALT_lexicon) for fr, en in sents]
 
-        src_fsa = libitg.make_fsa(ch_sent)
-        src_cfg = libitg.make_source_side_itg(lexicon)
-        forest = libitg.earley(src_cfg, src_fsa, 
-                               start_symbol=Nonterminal('S'), 
-                               sprime_symbol=Nonterminal("D(x)"))
+# make a random translations dictionary
 
-        projected_forest = libitg.make_target_side_itg(forest, lexicon)
+def make_random_transdicts(lexicon):
+	fr_en = defaultdict(lambda:defaultdict(float))
+	en_fr = defaultdict(lambda:defaultdict(float))
+	for fr, translations in lexicon.items():
+		for en in translations:
+			fr_en[fr][en] = np.random.uniform()
+			fr_en[en][fr] = np.random.uniform()
+	return fr_en, en_fr
 
-        tgt_fsa = libitg.make_fsa(en_sent)
-        ref_forest = libitg.earley(projected_forest, tgt_fsa, 
-                                   start_symbol=Nonterminal("D(x)"), 
-                                   sprime_symbol=Nonterminal('D(x,y)'))
+fr_en, en_fr = make_random_transdicts(lexicon)
+ALT_fr_en, ALT_en_fr = make_random_transdicts(ALT_lexicon)
 
-        length_fsa = libitg.LengthConstraint(len(en_sent), strict=False)
+# get the full feature set of target_forest and ref_forest together
+fset = get_full_fset(parses, fr_en, en_fr)
+ALT_fset = get_full_fset(ALT_parses, ALT_fr_en, ALT_en_fr)
 
-        target_forest = libitg.earley(projected_forest, length_fsa, 
-                                      start_symbol=Nonterminal("D(x)"), 
-                                      sprime_symbol=Nonterminal("D_n(x)"))
-        
-        parses = (target_forest, ref_forest, src_fsa)
-        
-        f = open(savepath + 'parses-{}.pkl'.format(k), 'wb')
-        pickle.dump(parses, f, protocol=4)
-        f.close()
-    
-def load_parses(savepath):
-    """
-    Loads and returns a parse_dict as saved by load_parses.
-    """
-    f = open(savepath + 'parse_dict.pkl', 'rb')
-    parse_dict = pickle.load(f)
-    f.close()
-    return parse_dict
+print(len(fset))
+print(len(ALT_fset))
 
-def load_parses_separate(savepath, k):
-    """
-    Loads and returns parses as saved by load_parses_separate
-    """
-    f = open(savepath + 'parses-{k}.pkl', 'rb')
-    parses = pickle.load(f)
-    f.close()
-    return parses
+
+# w_init = defaultdict(float)
+# for feature in fset:
+#     w_init[feature] = 0.00001*np.random.uniform()
+
+# w_test, delta_ws = sgd_func_minibatch(5, 0.01, w_init, minibatch=parses, 
+#                                       sparse=True, bar=False, log=True, check_convergence=True)
+
+
+w_init = defaultdict(float)
+for feature in ALT_fset:
+    w_init[feature] = 1e-5*np.random.uniform()
+
+w_test, delta_ws = sgd_func_minibatch(5, 1e-8, w_init, minibatch=ALT_parses, 
+                                      sparse=True, bar=False, log=True, check_convergence=True)
+
+
+
+
