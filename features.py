@@ -66,7 +66,10 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
             fmap['type:inverted'] += 1.0
             fset.add('type:inverted')
             
-        
+        # add features: 
+        #    type: inverted:span
+        #    type: monotone:span
+
         # source span feature of rhs
         src_span_lc = ls2 - ls1
         src_span_rc = rs2 - rs1
@@ -95,7 +98,7 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                 fmap['type:deletion'] += 1.0
                 fset.add('type:deletion')
                 # dense versions (for initial development phase)
-                fmap['ibm1:del:logprob'] += tgt_src[src_word]['<NULL>']
+                # fmap['ibm1:del:logprob'] += tgt_src[src_word]['<NULL>']
                 
                 # sparse version
                 if sparse_del:
@@ -106,7 +109,7 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                     fmap['type:insertion'] += 1.0
                     fset.add('type:insertion')
                     # dense version
-                    fmap['ibm1:ins:logprob'] += src_tgt['<NULL>'][tgt_word]
+                    # fmap['ibm1:ins:logprob'] += src_tgt['<NULL>'][tgt_word]
                     
                     # sparse version
                     if sparse_ins:
@@ -116,14 +119,21 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                     fmap['type:translation'] += 1.0
                     fset.add('type:translation')
                     # dense version
-                    fmap['ibm1:x2y:logprob'] += src_tgt[src_word][tgt_word]  # y is english word 
-                    fmap['ibm1:y2x:logprob'] += tgt_src[tgt_word][src_word]
+                    # fmap['ibm1:x2y:logprob'] += src_tgt[src_word][tgt_word]  # y is english word 
+                    # fmap['ibm1:y2x:logprob'] += tgt_src[tgt_word][src_word]
                     
                     # sparse version                    
                     if sparse_trans:
                         fmap['trans:%s/%s' % (src_word, tgt_word)] += 1.0
                         fset.add('trans:%s/%s' % (src_word, tgt_word))
         
+                    # add features for source skip-bigram
+                    l_word = '-START-' if s1 == 0 else src_fsa.label(s1-1, s2-1)
+                    r_word = '-END-' if s2+1 == src_fsa.nb_states() else src_fsa.label(s1, s2)
+                    skip_feature = 'skip-bigram:{0}*{1}'.format(l_word, r_word)
+                    fmap[skip_feature] += 1
+                    fset.add(skip_feature)
+
             # source span feature of rhs
             src_span = s2 - s1
             fmap['span:rhs:src:{}'.format(src_span)] += 1.0
@@ -200,4 +210,17 @@ def expected_feature_vector(forest: CFG, inside: dict, outside: dict, edge_featu
         for feature in edge_features[rule]:
             expected_features[rule][feature] = k * edge_features[rule][feature]
     return expected_features
+
+
+def expected_feature_vector_log(forest: CFG, inside: dict, outside: dict, edge_features: dict) -> dict:
+    """Returns an expected feature vector (here a sparse python dictionary)"""
+    expected_features = defaultdict(lambda:defaultdict(float))
+    for rule in forest:
+        k = outside[rule.lhs]
+        for symbol in rule.rhs:
+            k += inside[symbol]
+        for feature in edge_features[rule]:
+            expected_features[rule][feature] = k + edge_features[rule][feature]
+    return expected_features
+
 

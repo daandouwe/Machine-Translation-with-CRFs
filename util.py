@@ -17,6 +17,16 @@ def joint_prob(derrivation, estimated_weights, inside, root, log=False):
     if log: print(numerator, Z)
     return numerator / Z
 
+def joint_prob_log(derrivation, estimated_weights, inside, root):
+    """
+    Computes the joint probability of a a sentence and its derrivation.
+
+    Note: estimated_weights are logged!
+    """
+    numerator = sum([estimated_weights[edge] for edge in derrivation])
+    Z = inside[root]
+    return np.exp(numerator - Z)
+
 def save_weights(weights, savepath):
     f = open(savepath + 'weights.pkl', 'wb')
     pickle.dump(weights, f, protocol=4)
@@ -28,6 +38,19 @@ def load_weights(savepath):
     weights = pickle.load(f)
     f.close()
     return weights
+
+def save_weights_log(weights, savepath):
+    f = open(savepath + 'weights-log.pkl', 'wb')
+    pickle.dump(weights, f, protocol=4)
+    f.close()
+
+def load_weights_log(savepath):
+    print('weights loaded')
+    f = open(savepath + 'weights-log.pkl', 'rb')
+    weights = pickle.load(f)
+    f.close()
+    return weights
+
 
 def check_nan_inf(I_tgt, I_ref):
     """

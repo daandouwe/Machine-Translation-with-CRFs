@@ -42,7 +42,7 @@ parses = [parse_forests(ch, en, lexicon) for ch, en in short_corpus]
 # get the full feature set of target_forest and ref_forest together
 fset = get_full_fset(parses, ch_en, en_ch, sparse=True)
 print(len(fset))
-
+print('\n'.join(sorted(list(fset))))
 
 
 #### SAVING ####
