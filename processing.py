@@ -7,6 +7,7 @@ import pickle
 from math import nan
 import string
 from collections import defaultdict
+import progressbar
 
 ### READ DATA ###
 
@@ -263,7 +264,7 @@ def parse_forests_eps(src_sent, tgt_sent, lexicon):
                         start_symbol=Nonterminal("D_n(x)"), 
                         sprime_symbol=Nonterminal('D(x,y)'))
     
-    return target_forest, ref_forest, src_fsa
+    return target_forest, ref_forest, src_fsa, tgt_sent
 
 
 ### SAVING AND LOADING ###
@@ -297,23 +298,30 @@ def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, 
     :returns fset: all features used in both the forests
     """
     fset = set()
-    for k, (ch_sent, en_sent) in enumerate(corpus):
+    print('Parsing...')
+    bar = progressbar.ProgressBar(max_value=len(corpus))
+
+    for k, (src_sent, tgt_sent) in enumerate(corpus):
+        bar.update(k)
         if eps:
-            parses = parse_forests_eps(ch_sent, en_sent, lexicon)
+            parses = parse_forests_eps(src_sent, tgt_sent, lexicon)
         else:
-            parses = parse_forests(ch_sent, en_sent, lexicon)
+            parses = parse_forests(src_sent, tgt_sent, lexicon)
         f = open(savepath + 'parses-{}.pkl'.format(k), 'wb')
         pickle.dump(parses, f, protocol=4)
         f.close()
 
         # update fset
-        tgt_forest, ref_forest, src_fsa = parses
+        tgt_forest, ref_forest, src_fsa, tgt_sent = parses
         _, fset1 = featurize_edges(ref_forest, src_fsa, 
                                    sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
         _, fset2 = featurize_edges(tgt_forest, src_fsa, 
                                    sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
         fset.update(fset1 | fset2)
-    
+        
+        bar.update(k+1)
+
+    bar.finish()
     return fset
 
 # def save_parses_separate(parses, savepath):

@@ -7,6 +7,7 @@ from graph import *
 from collections import defaultdict, deque
 from itertools import chain
 from util import write_derrivation, joint_prob, joint_prob_log
+import progressbar
 
 
 ####
@@ -42,7 +43,9 @@ def update_w_log(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1
 
 def sgd_func_minibatch(iters, delta, w, minibatch=[], 
                        sparse=False, log=False, bar=True, 
-                       prob_log=False, check_convergence=False):
+                       prob_log=False, log_last=False,
+                       check_convergence=False,
+                       scale_weight=4):
     """
     Performs stochastic gradient descent on the weights vector w.
     """  
@@ -54,67 +57,51 @@ def sgd_func_minibatch(iters, delta, w, minibatch=[],
 
         delta_w = 0.0
         w_new = defaultdict(float)
+        if bar and not (i==iters-1 and log_last): bar = progressbar.ProgressBar(max_value=len(minibatch))
         
         for k, parse in enumerate(minibatch):
             
-            target_forest, ref_forest, src_fsa = parse
+            if bar and not (i==iters-1 and log_last): bar.update(k)
+            
+            target_forest, ref_forest, src_fsa, tgt_sent = parse
 
-            if bar: bar = progressbar.ProgressBar(max_value=13)
-            if bar: bar.update(0)
             
             ### D_n(x) ###
 
             tgt_edge2fmap, _ = featurize_edges(target_forest, src_fsa,
                                                sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse)
 
-            if bar: bar.update(1)
-
             # recompute edge weights
             tgt_edge_weights = {edge: np.exp(weight_function(edge, tgt_edge2fmap[edge], w)) for edge in target_forest}
-
-            if bar: bar.update(2)
 
             # compute inside and outside
             tgt_tsort = top_sort(target_forest)
             root_tgt = Nonterminal("D_n(x)")
-            if bar: bar.update(3)
             I_tgt = inside_algorithm(target_forest, tgt_tsort, tgt_edge_weights)
-            if bar: bar.update(4)
             O_tgt = outside_algorithm(target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt)
-            if bar: bar.update(5)
 
             # compute expected features
             expected_features_Dn_x = expected_feature_vector(target_forest, I_tgt, O_tgt, tgt_edge2fmap)
-            if bar: bar.update(6)
-
 
             ### D(x,y) ###
 
             ref_edge2fmap, _ = featurize_edges(ref_forest, src_fsa,
                                                sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse)
-            if bar: bar.update(7)
 
             # recompute edge weights
             ref_edge_weights = {edge: np.exp(weight_function(edge, ref_edge2fmap[edge], w)) for edge in ref_forest}
 
-            if bar: bar.update(8)
-
             # compute inside and outside
             tsort = top_sort(ref_forest)
             root_ref = Nonterminal("D(x,y)")
-            if bar: bar.update(9)
             I_ref = inside_algorithm(ref_forest, tsort, ref_edge_weights)
-            if bar: bar.update(10)
             O_ref = outside_algorithm(ref_forest, tsort, ref_edge_weights, I_ref, root_ref)
-            if bar: bar.update(11)
 
             # compute expected features
             expected_features_D_xy = expected_feature_vector(ref_forest, I_ref, O_ref, ref_edge2fmap)
-            if bar: bar.update(12)
 
             # update w
             w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta)
-            if bar: bar.update(13)
             
             # print('\n')
             # for k in sorted(w_step.keys()):
@@ -125,16 +112,16 @@ def sgd_func_minibatch(iters, delta, w, minibatch=[],
             for feature, value in w_step.items():
                 w_new[feature] += value / len(minibatch)
             
-            if bar: bar.finish()
 
-            if log or i==iters-1:
+            if log or (i==iters-1 and log_last):
                 print("x = '{}'".format(src_fsa.sent))
+                print("y = '{}'".format(tgt_sent))
                 
                 print('Viterbi')
                 d = viterbi(target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
                 candidates = write_derrivation(d)
                 print("Best y = '{}'".format(candidates.pop()))
-                print('P(y,d|x) = {}\n'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
+                print('P(y,d|x) = {}'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
                 
                 n = 100
                 d, count = sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
@@ -143,16 +130,19 @@ def sgd_func_minibatch(iters, delta, w, minibatch=[],
                 print("Best y = '{}'".format(candidates.pop()))
                 print('P(y,d|x) = {}\n'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
 
+            if bar and not (i==iters-1 and log_last): bar.update(k+1)
+        
+        if bar and not (i==iters-1 and log_last): bar.finish()
+
         # print('\n')
         # for k in sorted(w.keys()):
         #     print('{}'.format(k).ljust(25) + '{}'.format(w[k]))
         # print('\n')
 
-        # hack: scale weights so that they are at most of the scale 10**4
+        # hack: scale weights so that they are at most of the scale 10**scale_weight
         abs_max = max(map(abs, w_new.values()))
         for k, v in w_new.items():
-            w_new[k] = v / 10**(int(log10(abs_max))+1 - 4)
-
+            w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
 
         w = w_new        
         ws.append(w)
