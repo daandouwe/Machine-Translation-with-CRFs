@@ -294,7 +294,7 @@ def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, 
 
     :corpus: a list of tuples [(chinese sentence, english sentence)] 
     :param lexicon: a lexicon holding translations for each word in the corpus
-    :saves: parses-k = (target_forest, ref_forest, scr_fsa) for each k in 0,..,len(corpus)
+    :saves: parses-k = (target_forest, ref_forest, scr_fsa, tgt_sent) for each k in 0,..,len(corpus)
     :returns fset: all features used in both the forests
     """
     fset = set()

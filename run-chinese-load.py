@@ -43,6 +43,7 @@ w_first = load_weights(savepath)
 # 	print(('\t'.join(map(str,[k, w_first[k]]))).expandtabs(25))
 # print('\n')
 
+# partition the parses in minibatches each of size 15 (e.g.)
 minibatches = partition(parses, 15)
 w_trained, delta_ws = sgd_minibatches(3, 1e-4, w_first, minibatches=minibatches, 
                                       sparse=True, bar=True, log=False, log_last=True,
