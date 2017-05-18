@@ -324,20 +324,6 @@ def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, 
     bar.finish()
     return fset
 
-# def save_parses_separate(parses, savepath):
-#     """
-#     For each sentence k in corpus we parse and save the triple of needed parses 
-#     as pkl object at savepath/parses-k.pkl.
-
-#     :parses: a list of triples [(target_forest, ref_forest, src_fsa)] 
-#     :param lexicon: a lexicon holding translations for each word in the corpus
-#     :saves: parses-k.pkl = (target_forest, ref_forest, scr_fsa) for each k in 0,..,len(parses)
-#     """
-#     for k, parse in enumerate(parses):
-#         f = open(savepath + 'parses-{}.pkl'.format(k), 'wb')
-#         pickle.dump([parse], f, protocol=4)
-#         f.close()
-
 
 def load_parses(savepath):
     """
