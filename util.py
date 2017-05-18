@@ -1,5 +1,5 @@
-import libitg as libitg
-from libitg import CFG
+import lib.formal
+from lib.formal import CFG
 import numpy as np
 import pickle
 
