@@ -52,6 +52,9 @@ def load_weights_log(savepath):
     f.close()
     return weights
 
+def partition(l, n):
+    return [l[i:i + n] for i in range(0, len(list(l)), n)]
+
 
 def check_nan_inf(I_tgt, I_ref):
     """
