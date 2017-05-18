@@ -9,9 +9,11 @@ Project 2 of NLP2
 
 * Note that we're using a hack to prevent huge values in the weight vector: in SGD the optional parameter scale_weight can be set to any integer `k`. Then all values in the weight vector are scaled so that none exceed `10**k`.
 
-## Do
+## TODO
 
 * Mess around training on different sizes of corpus, with different mini-batch sizes, learning-rates, scale_weights, and regularizers.
+
+* Think about more features. Check `simple_features` for what we already have. Perhaps we need more span features. I added skip-bigram features recently: `le * noir` for the word `chien` in `le chien noir.`, and `chien * -END-` for `.`. 
 
 ## Some issues/questions
 
