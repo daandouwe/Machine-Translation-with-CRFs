@@ -1,8 +1,6 @@
 import numpy as np
 import pickle
-from libitg import Symbol, Terminal, Nonterminal, Span
-from libitg import Rule, CFG
-from libitg import FSA
+from lib.formal import Symbol, Terminal, Nonterminal, Span, Rule, CFG, FSA
 from features import *
 from processing import *
 from graph import *
@@ -128,15 +126,20 @@ def sgd_func_minibatch(iters, delta, w, minibatch=[],
                 w_new[feature] += value / len(minibatch)
             
             if bar: bar.finish()
-        
-            
-            # testing for nan and inf
-
 
             if log or i==iters-1:
+                print("x = '{}'".format(src_fsa.sent))
+                
+                print('Viterbi')
                 d = viterbi(target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
                 candidates = write_derrivation(d)
-                print("x = '{}'".format(src_fsa.sent))
+                print("Best y = '{}'".format(candidates.pop()))
+                print('P(y,d|x) = {}\n'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
+                
+                n = 100
+                d, count = sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
+                candidates = write_derrivation(d)
+                print('Most sampled: {0}/{1}'.format(count, n))
                 print("Best y = '{}'".format(candidates.pop()))
                 print('P(y,d|x) = {}\n'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
 
@@ -144,6 +147,12 @@ def sgd_func_minibatch(iters, delta, w, minibatch=[],
         # for k in sorted(w.keys()):
         #     print('{}'.format(k).ljust(25) + '{}'.format(w[k]))
         # print('\n')
+
+        # hack: scale weights so that they are at most of the scale 10**4
+        abs_max = max(map(abs, w_new.values()))
+        for k, v in w_new.items():
+            w_new[k] = v / 10**(int(log10(abs_max))+1 - 4)
+
 
         w = w_new        
         ws.append(w)

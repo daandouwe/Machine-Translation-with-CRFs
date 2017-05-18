@@ -1,4 +1,3 @@
-import libitg as libitg
 import numpy as np
 from sgd import sgd_func_minibatch, sgd_func_minibatch_log
 from collections import defaultdict

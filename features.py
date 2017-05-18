@@ -1,18 +1,47 @@
-import libitg
-from libitg import Symbol, Terminal, Nonterminal, Span
-from libitg import Rule, CFG
-from libitg import FSA
+import lib.formal
+from lib.formal import Symbol, Terminal, Nonterminal, Span, Rule, CFG, FSA
 from graph import *
 from collections import defaultdict
 import numpy as np
 
 
-def get_terminal_string(symbol: Symbol):
+# def get_terminal_string(symbol: Symbol):
+#     """Returns the python string underlying a certain terminal (thus unwrapping all span annotations)"""
+#     if not symbol.is_terminal():
+#         raise ValueError('I need a terminal, got %s of type %s' % (symbol, type(symbol)))
+#     return symbol.root().obj()
+
+
+# def get_bispans(symbol: Span):
+#     """
+#     Returns the bispans associated with a symbol. 
+    
+#     The first span returned corresponds to paths in the source FSA (typically a span in the source sentence),
+#      the second span returned corresponds to either
+#         a) paths in the target FSA (typically a span in the target sentence)
+#         or b) paths in the length FSA
+#     depending on the forest where this symbol comes from.
+#     """
+#     if not isinstance(symbol, Span):
+#         raise ValueError('I need a span, got %s of type %s' % (symbol, type(symbol)))
+#     s, start2, end2 = symbol.obj()  # this unwraps the target or length annotation
+#     _, start1, end1 = s.obj()  # this unwraps the source annotation
+#     return (start1, end1), (start2, end2)
+
+
+def get_source_word(fsa: FSA, origin: int, destination: int) -> str:
+    """Returns the python string representing a source word from origin to destination (assuming there's a single one)"""
+    labels = list(fsa.labels(origin, destination))
+    if len(labels) == 0:
+        return '-EPS-'
+    assert len(labels) == 1, 'Use this function only when you know the path is unambiguous, found %d labels %s for (%d, %d)' % (len(labels), labels, origin, destination)
+    return labels[0]
+
+def get_target_word(symbol: Symbol):
     """Returns the python string underlying a certain terminal (thus unwrapping all span annotations)"""
     if not symbol.is_terminal():
         raise ValueError('I need a terminal, got %s of type %s' % (symbol, type(symbol)))
     return symbol.root().obj()
-
 
 def get_bispans(symbol: Span):
     """
@@ -27,7 +56,13 @@ def get_bispans(symbol: Span):
     if not isinstance(symbol, Span):
         raise ValueError('I need a span, got %s of type %s' % (symbol, type(symbol)))
     s, start2, end2 = symbol.obj()  # this unwraps the target or length annotation
-    _, start1, end1 = s.obj()  # this unwraps the source annotation
+    s1, start1, end1 = s.obj()  # this unwraps the source annotation
+    if isinstance(s1, Span): # for the (weird) case of triple spans on symbols: '-EPS-':3-4:0-0:4-4 and [S]:0-2:0-0:0-2 for example.
+        _, start1, end1 = s1.obj()
+        # print(symbol)
+        # print(s1)
+        # print(type(s1))
+        # print(start1, end1)
     return (start1, end1), (start2, end2)
 
 
@@ -92,9 +127,11 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
             fset.add('type:terminal')
             # we could have IBM1 log probs for the traslation pair or ins/del
             (s1, s2), (t1, t2) = get_bispans(symbol)
-            src_word = src_fsa.label(s1, s2)
-            tgt_word = get_terminal_string(symbol)
+            # src_word = get_source_word(src_fsa, s1, s2)
+            # tgt_word = get_terminal_string(symbol)
             if symbol.root() == eps:  # symbol.root() gives us a Terminal free of annotation
+                # for sure there is a source word
+                src_word = get_source_word(src_fsa, s1, s2)
                 fmap['type:deletion'] += 1.0
                 fset.add('type:deletion')
                 # dense versions (for initial development phase)
@@ -104,7 +141,9 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                 if sparse_del:
                     fmap['del:%s' % src_word] += 1.0
                     fset.add('del:%s' % src_word)
-            else:                
+            else:
+                # for sure there's a target word
+                tgt_word = get_target_word(symbol)                
                 if s1 == s2:  # has not consumed any source word, must be an eps rule
                     fmap['type:insertion'] += 1.0
                     fset.add('type:insertion')
@@ -116,6 +155,8 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                         fmap['ins:%s' % tgt_word] += 1.0
                         fset.add('ins:%s' % tgt_word)
                 else:
+                    # for sure there's a source word
+                    src_word = get_source_word(src_fsa, s1, s2)
                     fmap['type:translation'] += 1.0
                     fset.add('type:translation')
                     # dense version
@@ -128,8 +169,8 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
                         fset.add('trans:%s/%s' % (src_word, tgt_word))
         
                     # add features for source skip-bigram
-                    l_word = '-START-' if s1 == 0 else src_fsa.label(s1-1, s2-1)
-                    r_word = '-END-' if s2+1 == src_fsa.nb_states() else src_fsa.label(s1, s2)
+                    l_word = '-START-' if s1 == 0 else get_source_word(src_fsa, s1-1, s1)
+                    r_word = '-END-' if s2+1 == src_fsa.nb_states() else get_source_word(src_fsa, s2, s2+1)
                     skip_feature = 'skip-bigram:{0}*{1}'.format(l_word, r_word)
                     fmap[skip_feature] += 1
                     fset.add(skip_feature)
@@ -173,8 +214,8 @@ def get_full_fset(parses, src_tgt, tgt_src, sparse=False):
     """
     fset = set()
     for tgt_forest, ref_forest, src_fsa in parses:
-        _, fset1 = featurize_edges(tgt_forest, src_fsa, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
         _, fset2 = featurize_edges(ref_forest, src_fsa, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+        _, fset1 = featurize_edges(tgt_forest, src_fsa, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
         fset.update(fset1 | fset2)
     return fset
 

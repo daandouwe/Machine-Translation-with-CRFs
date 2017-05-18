@@ -1,7 +1,7 @@
-import libitg
-from libitg import Symbol, Terminal, Nonterminal, Span
-from libitg import Rule, CFG
-from collections import defaultdict, deque
+import lib.formal
+from lib.formal import Symbol, Terminal, Nonterminal, Span, Rule, CFG, FSA
+from util import write_derrivation
+from collections import defaultdict, deque, Counter
 import numpy as np
 
 
@@ -167,22 +167,35 @@ def viterbi_log(forest: CFG, tsort: list, edge_weights: dict, inside: dict, root
     return V
 
 
-def sample(forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Symbol) -> dict:
+def sample(num_samples: int, forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Symbol) -> dict:
     """Returns the viterbi decoding of hypergraph"""
-    Q = deque([root])
-    V = list()
-    while Q:
-        symbol = Q.popleft()
-        incoming = forest.get(symbol)
-        weights = [0.0]*len(incoming)
-        for i, edge in enumerate(incoming):
-            weights[i] = edge_weights[edge]
-            for u in edge.rhs: # u in tail(e)
-                weights[i] *= inside[u] # TODO: change to log-sum-exp
-        # weight, selected = max(zip(weights, incoming), key=lambda xy: xy[0])
-        # weight, selected = sample
-        for sym in selected.rhs:
-            if not sym.is_terminal():
-                Q.append(sym)
-        V.append(selected)    
-    return V
+    samples = list()
+    for i in range(num_samples):
+        Q = deque([root])
+        S = list()
+        while Q:
+            symbol = Q.popleft()
+            incoming = forest.get(symbol)
+            weights = [0.0]*len(incoming)
+            for i, edge in enumerate(incoming):
+                weights[i] = edge_weights[edge]
+                for u in edge.rhs: # u in tail(e)
+                    weights[i] *= inside[u] # TODO: change to log-sum-exp
+            probs = np.array(weights) / sum(weights)
+            index = np.argmax(np.random.multinomial(1, probs))
+            selected = incoming[index]
+            for sym in selected.rhs:
+                if not sym.is_terminal():
+                    Q.append(sym)
+            S.append(selected)    
+        samples.append(S)
+    # most_sampled, counts = Counter(samples).most_common(1)[0]
+    # hack since list in unhashable type
+    ys = [write_derrivation(d).pop() for d in samples] 
+    most_y, counts = Counter(ys).most_common(1)[0]
+    dic = {y: d for y, d in zip(ys, samples)}
+    most_sampled = dic[most_y]
+    return most_sampled, counts
+
+
+

@@ -1,4 +1,4 @@
-import libitg as libitg
+import lib.formal
 import numpy as np
 from sgd import sgd_func_minibatch
 from collections import defaultdict

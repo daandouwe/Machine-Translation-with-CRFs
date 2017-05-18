@@ -1,4 +1,3 @@
-import libitg as libitg
 import numpy as np
 from sgd import sgd_func_minibatch
 from collections import defaultdict
@@ -21,37 +20,31 @@ corpus = read_data(max_sents=300)
 # corpus = read_data(max_sents=100) # worked great with init=1e-5 en lr=1e-9
 
 # get only short sentences for ease of training
-short_corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 5]
-print('\n'.join(map(str,short_corpus)))
-print(len(short_corpus))
+corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]
+print('\n'.join(map(str, corpus)))
+print(len(corpus))
 
 
 
 #### PARSES ####
 
 # make lexicons for sentences in short corpus
-lexicons = [make_lexicon(ch_sent, ch_en) for ch_sent, _ in short_corpus]
+lexicons = [make_lexicon(ch_sent, ch_en) for ch_sent, _ in corpus]
 # make one big lexicon covering all words
 lexicon = make_total_lexicon(lexicons)
 for k, v in lexicon.items():
 	print(k,v)
 
-# make parses based on lexicon
-parses = [parse_forests(ch, en, lexicon) for ch, en in short_corpus]
-
-# get the full feature set of target_forest and ref_forest together
-fset = get_full_fset(parses, ch_en, en_ch, sparse=True)
-print(len(fset))
-print('\n'.join(sorted(list(fset))))
-
 
 #### SAVING ####
 
-savepath = '../parses/'
+savepath = '../parses/eps/'
 
-save_parses_separate(short_corpus, lexicon, savepath)
+fset = save_parses_separate(corpus, lexicon, savepath, ch_en, en_ch, eps=True, sparse=True)
 
 save_lexicon(lexicon, savepath)
 
 save_featureset(fset, savepath)
 
+print(len(fset))
+print('\n'.join(sorted(list(fset))))
