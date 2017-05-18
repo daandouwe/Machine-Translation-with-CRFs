@@ -10,44 +10,40 @@ from util import write_derrivation, joint_prob, joint_prob_log
 import progressbar
 
 
-####
-
-# NOTE: we are working wih exp(weights)!
-
-# This causes numerical instability?
-
-####
-
-
-def update_w(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1):
-    w_new = defaultdict(float)
-    delta_w = 0.0 # holds the sum of deltas
-    for rule in chain(expected_features_D_xy, expected_features_Dn_x):
-        for feature in chain(expected_features_D_xy[rule], expected_features_Dn_x[rule]):
-            d_w = delta * (expected_features_D_xy[rule][feature] - 
-                           expected_features_Dn_x[rule][feature])
-            w_new[feature] = wmap[feature] + d_w
-            delta_w += abs(d_w)
-    return w_new, delta_w
-
-def update_w_log(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1):
-    w_new = defaultdict(float)
-    delta_w = 0.0 # holds the sum of deltas
-    for rule in chain(expected_features_D_xy, expected_features_Dn_x):
-        for feature in chain(expected_features_D_xy[rule], expected_features_Dn_x[rule]):
-            d_w = delta * (expected_features_D_xy[rule][feature] - 
-                           expected_features_Dn_x[rule][feature])
-            w_new[feature] = wmap[feature] + d_w
-            delta_w += abs(d_w)
-    return w_new, delta_w
-
-def sgd_func_minibatch(iters, delta, w, minibatch=[], 
-                       sparse=False, log=False, bar=True, 
-                       prob_log=False, log_last=False,
-                       check_convergence=False,
-                       scale_weight=4):
+def update_w(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1, regularizer=False):
     """
-    Performs stochastic gradient descent on the weights vector w.
+    Uses a regularizer.
+    NOTE: not sure if correct. Perhaps + regularizer * wmap_l1norm instead of -?
+    """
+    w_new = defaultdict(float)
+    delta_w = 0.0 # holds the sum of deltas
+
+    wmap_l1norm = sum(map(abs, wmap.values()))
+    for rule in chain(expected_features_D_xy, expected_features_Dn_x):
+        for feature in chain(expected_features_D_xy[rule], expected_features_Dn_x[rule]):
+            if regularizer:
+                d_w = delta * (expected_features_D_xy[rule][feature] - 
+                               expected_features_Dn_x[rule][feature] -
+                               regularizer * wmap_l1norm)
+            else:
+                d_w = delta * (expected_features_D_xy[rule][feature] - 
+                               expected_features_Dn_x[rule][feature])
+            
+
+            w_new[feature] = wmap[feature] + d_w
+            delta_w += abs(d_w)
+    return w_new, delta_w
+
+
+def sgd_minibatch(iters, delta, w, minibatch=[], 
+                  sparse=False, log=False, bar=True, 
+                  prob_log=False, log_last=False,
+                  check_convergence=False,
+                  scale_weight=4,
+                  regularizer=False):
+    """
+    Performs stochastic gradient descent on the weights vector w
+    on a minibatch = [parses_1,parses_2,...,parses_N]
     """  
     ws = []
     delta_ws = []
@@ -101,7 +97,7 @@ def sgd_func_minibatch(iters, delta, w, minibatch=[],
             expected_features_D_xy = expected_feature_vector(ref_forest, I_ref, O_ref, ref_edge2fmap)
 
             # update w
-            w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta)
+            w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta, regularizer=regularizer)
             
             # print('\n')
             # for k in sorted(w_step.keys()):
@@ -149,8 +145,147 @@ def sgd_func_minibatch(iters, delta, w, minibatch=[],
         delta_ws.append(delta_w)
         if check_convergence:
             print('delta w = {}\n'.format(delta_w))
-    
+
     return ws, delta_ws
+
+
+def sgd_minibatches(iters, delta, w, minibatches=[], 
+                    sparse=False, log=False, bar=True, 
+                    prob_log=False, log_last=False,
+                    check_convergence=False,
+                    scale_weight=4,
+                    regularizer=False):
+    """
+    Performs stochastic gradient descent on the weights vector w on
+    minibatches = [minibatch_1, minibatch_2,....,minibatch_N]
+    """  
+    ws = []
+    delta_ws = []
+    for i in range(iters):
+        
+        print('Iteration {}'.format(i+1))
+
+        delta_w = 0.0
+        w_new = defaultdict(float)
+        
+        if bar and not (i==iters-1 and log_last): bar = progressbar.ProgressBar(max_value=len(minibatches))
+        
+        for k, minibatch in enumerate(minibatches):
+            
+            if bar and not (i==iters-1 and log_last): bar.update(k)
+
+            for l, parse in enumerate(minibatch):
+                
+                
+                target_forest, ref_forest, src_fsa, tgt_sent = parse
+
+                
+                ### D_n(x) ###
+
+                tgt_edge2fmap, _ = featurize_edges(target_forest, src_fsa,
+                                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse)
+
+                # recompute edge weights
+                tgt_edge_weights = {edge: np.exp(weight_function(edge, tgt_edge2fmap[edge], w)) for edge in target_forest}
+
+                # compute inside and outside
+                tgt_tsort = top_sort(target_forest)
+                root_tgt = Nonterminal("D_n(x)")
+                I_tgt = inside_algorithm(target_forest, tgt_tsort, tgt_edge_weights)
+                O_tgt = outside_algorithm(target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt)
+
+                # compute expected features
+                expected_features_Dn_x = expected_feature_vector(target_forest, I_tgt, O_tgt, tgt_edge2fmap)
+
+                ### D(x,y) ###
+
+                ref_edge2fmap, _ = featurize_edges(ref_forest, src_fsa,
+                                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse)
+
+                # recompute edge weights
+                ref_edge_weights = {edge: np.exp(weight_function(edge, ref_edge2fmap[edge], w)) for edge in ref_forest}
+
+                # compute inside and outside
+                tsort = top_sort(ref_forest)
+                root_ref = Nonterminal("D(x,y)")
+                I_ref = inside_algorithm(ref_forest, tsort, ref_edge_weights)
+                O_ref = outside_algorithm(ref_forest, tsort, ref_edge_weights, I_ref, root_ref)
+
+                # compute expected features
+                expected_features_D_xy = expected_feature_vector(ref_forest, I_ref, O_ref, ref_edge2fmap)
+
+                # update w
+                w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta, regularizer=regularizer)
+                
+                # print('\n')
+                # for k in sorted(w_step.keys()):
+                #     print('{}'.format(k).ljust(25) + '{}'.format(w_step[k]))
+                # print('\n')
+
+                delta_w += d_w / len(minibatch)
+                for feature, value in w_step.items():
+                    w_new[feature] += value / len(minibatch)
+                
+
+                if log or (i==iters-1 and log_last):
+                    print("x = '{}'".format(src_fsa.sent))
+                    print("y = '{}'".format(tgt_sent))
+                    
+                    print('Viterbi')
+                    d = viterbi(target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
+                    candidates = write_derrivation(d)
+                    print("Best y = '{}'".format(candidates.pop()))
+                    print('P(y,d|x) = {}'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
+                    
+                    n = 100
+                    d, count = sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
+                    candidates = write_derrivation(d)
+                    print('Most sampled: {0}/{1}'.format(count, n))
+                    print("Best y = '{}'".format(candidates.pop()))
+                    print('P(y,d|x) = {}\n'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
+
+            if bar and not (i==iters-1 and log_last): bar.update(k+1)
+            
+
+            # print('\n')
+            # for k in sorted(w.keys()):
+            #     print('{}'.format(k).ljust(25) + '{}'.format(w[k]))
+            # print('\n')
+
+            # hack: scale weights so that they are at most of the scale 10**scale_weight
+            abs_max = max(map(abs, w_new.values()))
+            for k, v in w_new.items():
+                w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
+
+            w = w_new        
+            ws.append(w)
+            delta_ws.append(delta_w)
+
+        
+        if bar and not (i==iters-1 and log_last): bar.finish()
+        
+        if check_convergence:
+            print('delta w = {}\n'.format(delta_ws))
+
+    return ws, delta_ws
+
+
+##########################
+# Not needed any longer? #
+##########################
+
+
+def update_w_log(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1):
+    w_new = defaultdict(float)
+    delta_w = 0.0 # holds the sum of deltas
+    for rule in chain(expected_features_D_xy, expected_features_Dn_x):
+        for feature in chain(expected_features_D_xy[rule], expected_features_Dn_x[rule]):
+            d_w = delta * (expected_features_D_xy[rule][feature] - 
+                           expected_features_Dn_x[rule][feature])
+            w_new[feature] = wmap[feature] + d_w
+            delta_w += abs(d_w)
+    return w_new, delta_w
+
 
 
 def sgd_func_minibatch_log(iters, delta, w, minibatch=[], 
