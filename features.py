@@ -5,30 +5,6 @@ from collections import defaultdict
 import numpy as np
 
 
-# def get_terminal_string(symbol: Symbol):
-#     """Returns the python string underlying a certain terminal (thus unwrapping all span annotations)"""
-#     if not symbol.is_terminal():
-#         raise ValueError('I need a terminal, got %s of type %s' % (symbol, type(symbol)))
-#     return symbol.root().obj()
-
-
-# def get_bispans(symbol: Span):
-#     """
-#     Returns the bispans associated with a symbol. 
-    
-#     The first span returned corresponds to paths in the source FSA (typically a span in the source sentence),
-#      the second span returned corresponds to either
-#         a) paths in the target FSA (typically a span in the target sentence)
-#         or b) paths in the length FSA
-#     depending on the forest where this symbol comes from.
-#     """
-#     if not isinstance(symbol, Span):
-#         raise ValueError('I need a span, got %s of type %s' % (symbol, type(symbol)))
-#     s, start2, end2 = symbol.obj()  # this unwraps the target or length annotation
-#     _, start1, end1 = s.obj()  # this unwraps the source annotation
-#     return (start1, end1), (start2, end2)
-
-
 def get_source_word(fsa: FSA, origin: int, destination: int) -> str:
     """Returns the python string representing a source word from origin to destination (assuming there's a single one)"""
     labels = list(fsa.labels(origin, destination))
@@ -59,10 +35,6 @@ def get_bispans(symbol: Span):
     s1, start1, end1 = s.obj()  # this unwraps the source annotation
     if isinstance(s1, Span): # for the (weird) case of triple spans on symbols: '-EPS-':3-4:0-0:4-4 and [S]:0-2:0-0:0-2 for example.
         _, start1, end1 = s1.obj()
-        # print(symbol)
-        # print(s1)
-        # print(type(s1))
-        # print(start1, end1)
     return (start1, end1), (start2, end2)
 
 
