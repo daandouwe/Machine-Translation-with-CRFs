@@ -7,7 +7,7 @@ Project 2 of NLP2
 
 * Use `run-chinese-load.py` to load these parses and train on them. Specify how many sentences you load in the list comprehension in line 11. You can pre-train a `w` and save this. Then reload this one each time you train (redo this whenever you reload new parses!). Use sgd_minibatches when training on a large corpus. 
 
-* Note that we're using a hack to prevent hughe values in the weight vector: in sgd the optional parameter scale_weight can be set to any integer `k`. Then all values in the weight vector are scaled so that none exceed `10**k`.
+* Note that we're using a hack to prevent hugh values in the weight vector: in SGD the optional parameter scale_weight can be set to any integer `k`. Then all values in the weight vector are scaled so that none exceed `10**k`.
 
 ## Do
 
