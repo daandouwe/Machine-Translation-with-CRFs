@@ -15,4 +15,4 @@ Project 2 of NLP2
 
 ## Some issues/questions
 
-* Not sure about the regularizer. Should we use: $\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] + \lambda ||w|| $ or  $\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] - lambda ||w||$?
+* Not sure about the regularizer. Should we use: \\\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] + \lambda ||w|| \\ or  $\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] - lambda ||w||$?
