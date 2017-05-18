@@ -348,7 +348,7 @@ def load_parses_separate(savepath, k):
     f = open(savepath + 'parses-{}.pkl'.format(k), 'rb')
     parse = pickle.load(f)
     f.close()
-    return parse[0]
+    return parse
 
 
 def save_lexicon(lexicon, savepath):

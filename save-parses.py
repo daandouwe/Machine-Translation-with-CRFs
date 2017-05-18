@@ -20,7 +20,7 @@ corpus = read_data(max_sents=300)
 # corpus = read_data(max_sents=100) # worked great with init=1e-5 en lr=1e-9
 
 # get only short sentences for ease of training
-corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]
+corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 5]
 print('\n'.join(map(str, corpus)))
 print(len(corpus))
 
