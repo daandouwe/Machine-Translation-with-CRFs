@@ -1,11 +1,18 @@
 # Machine-Translation-with-CRFs
 Project 2 of NLP2
 
+## How-to
+
+* Use `save-parses.py` to save the parse-forest of a number of sentence pairs of a corpus. In `translations` you can set `k` and `null` to control how many translations (`k`) and insertions (`null`) to make. Set the size of the corpus in `read_data` and the maximal sentence length just below.
+
+* Use `run-chinese-load.py` to load these parses and train on them. Specify how many sentences you load in the list comprehension in line 11. You can pre-train a `w` and save this. Then reload this one each time you train (redo this whenever you reload new parses!). Use sgd_minibatches when training on a large corpus. 
+
+* Note that we're using a hack to prevent hughe values in the weight vector: in sgd the optional parameter scale_weight can be set to any integer `k`. Then all values in the weight vector are scaled so that none exceed `10**k`.
+
+## Do
+
+* Mess around training on different sizes of corpus, with different mini-batch sizes, learning-rates, scale_weights, and regularizers.
+
 ## Some issues/questions
-* On training time, should we use `make_lexicon`, or `make_lexicon_ALT`? 
 
-* ~The parse forests for Chinese-English sentence pair of length 8 is really huge! Pickling this with `save_parses_separate` takes around 22Mb per pair (and we have +- 40.000 pairs..). This is 800Gb! This will not work right?~ Fixed this! Now the parses take between 300KB and 20 MB (large variability as a result of varying sentence-length).
-
-* ~Parsing a sentence (especially generating target_forest) takes long. Around 4 minutes... So 4*40.000 = too long?~ Fixed this! Parsing now takes 10-20 seconds
-
-* ~Should we use logs somewhere in the `inside` and `outside` algorithms?~ No! Use exponentiated edge-weights for inside and outside.
+* Not sure about the regularizer. Should we use: $\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] + \lambda ||w|| $ or  $\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] - lambda ||w||$?
