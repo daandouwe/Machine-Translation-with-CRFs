@@ -3,7 +3,7 @@ WIlker tips:
 Regulariser: 
 	Use l2 norm
 	Should be substraction of regulariser
-	Not working!
+	(Not working!)
 
 Learning rate:
 	o Larger learning rate! Start with 1 or 10
