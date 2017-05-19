@@ -1,5 +1,4 @@
 import numpy as np
-from sgd import sgd_func_minibatch
 from collections import defaultdict
 from processing import *
 from features import featurize_edges, get_full_fset
@@ -16,12 +15,12 @@ ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct
 # ch_en, en_ch, _, _ = translations_ALT(path='data/lexicon', k=3, null=3, remove_punct=True)
 
 # load corpus
-corpus = read_data(max_sents=200)
+corpus = read_data(max_sents=2000)
 # corpus = read_data(max_sents=100) # worked great with init=1e-5 en lr=1e-9
 
 # get only short sentences for ease of training
 corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 8]
-print('\n'.join(map(str, corpus)))
+# print('\n'.join(map(str, corpus)))
 print(len(corpus))
 
 

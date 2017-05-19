@@ -6,7 +6,7 @@ from processing import *
 from graph import *
 from collections import defaultdict, deque
 from itertools import chain
-from util import write_derrivation, joint_prob, joint_prob_log
+from util import write_derrivation, joint_prob, joint_prob_log, save_weights
 import progressbar
 
 
@@ -127,7 +127,7 @@ def sgd_minibatch(iters, delta, w, minibatch=[],
                 print('P(y,d|x) = {}\n'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
 
             if bar and not (i==iters-1 and log_last): bar.update(k+1)
-        
+
         if bar and not (i==iters-1 and log_last): bar.finish()
 
         # print('\n')
@@ -145,6 +145,8 @@ def sgd_minibatch(iters, delta, w, minibatch=[],
         delta_ws.append(delta_w)
         if check_convergence:
             print('delta w = {}\n'.format(delta_w))
+
+        save_weights(w, '../parses/eps/trained-{}-'.format(i+1))
 
     return ws, delta_ws
 
@@ -261,7 +263,8 @@ def sgd_minibatches(iters, delta, w, minibatches=[],
             ws.append(w)
             delta_ws.append(delta_w)
 
-        
+            save_weights(w, '../parses/eps/trained-{}-'.format(i+1))
+            
         if bar and not (i==iters-1 and log_last): bar.finish()
         
         if check_convergence:
