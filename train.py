@@ -6,9 +6,10 @@ from features import featurize_edges, get_full_fset
 from util import save_weights, load_weights, partition
 
 # savepath = '../parses/29-sents-2-translations-sparse/'
-savepath = '../parses/eps/'
+savepath = '../parses/eps-100/'
+# savepath = '../parses/eps/'
 
-parses = [load_parses_separate(savepath, k) for k in range(969)]
+parses = [load_parses_separate(savepath, k) for k in range(45)]
 
 lexicon = load_lexicon(savepath)
 
@@ -44,15 +45,11 @@ for feature in fset:
 # print('\n')
 
 # partition the parses in minibatches each of size 15 (e.g.)
-minibatches = partition(parses, 15)
-w_trained, delta_ws = sgd_minibatches(10, 1e-8, w_init, minibatches=minibatches, 
+minibatches = partition(parses, 10)
+w_trained, delta_ws = sgd_minibatches(2, 10, w_init, minibatches=minibatches, 
                                       sparse=True, bar=True, log=False, log_last=True,
-                                      check_convergence=True, scale_weight=1, regularizer=False)
-
-# w_test, delta_ws = sgd_minibatch(3, 1e-4, w_first, minibatch=parses, 
-#                                  sparse=True, bar=True, log=False, log_last=True,
-#                                  check_convergence=True, scale_weight=1,
-#                                  regularizer=1e4)
+                                      check_convergence=True, scale_weight=3, regularizer=False,
+                                      lmbda=2.0)
 
 save_weights(w_trained, savepath + 'trained-')
 

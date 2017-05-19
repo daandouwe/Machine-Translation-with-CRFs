@@ -1,0 +1,16 @@
+WIlker tips:
+
+Regulariser: 
+	Use l2 norm
+	Should be substraction of regulariser
+	Not working!
+
+Learning rate:
+	o Larger learning rate! Start with 1 or 10
+	o Decay the learning rate exponentially at each minibatch step
+	  γt = γ0 (1 + γ0*λ*t)**(−1)
+
+Annealing:
+	
+
+	

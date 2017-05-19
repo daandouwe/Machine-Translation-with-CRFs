@@ -19,12 +19,14 @@ def update_w(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1, re
     delta_w = 0.0 # holds the sum of deltas
 
     wmap_l1norm = sum(map(abs, wmap.values()))
+    wmap_l2norm = np.sqrt(sum(np.square(list(wmap.values()))))
+
     for rule in chain(expected_features_D_xy, expected_features_Dn_x):
         for feature in chain(expected_features_D_xy[rule], expected_features_Dn_x[rule]):
             if regularizer:
                 d_w = delta * (expected_features_D_xy[rule][feature] - 
                                expected_features_Dn_x[rule][feature] -
-                               regularizer * wmap_l1norm)
+                               regularizer * wmap_l2norm)
             else:
                 d_w = delta * (expected_features_D_xy[rule][feature] - 
                                expected_features_Dn_x[rule][feature])
@@ -151,34 +153,51 @@ def sgd_minibatch(iters, delta, w, minibatch=[],
     return ws, delta_ws
 
 
-def sgd_minibatches(iters, delta, w, minibatches=[], 
+def sgd_minibatches(iters, delta_0, w, minibatches=[], 
                     sparse=False, log=False, bar=True, 
                     prob_log=False, log_last=False,
                     check_convergence=False,
-                    scale_weight=4,
-                    regularizer=False):
+                    scale_weight=False,
+                    regularizer=False,
+                    lmbda=2.0):
     """
     Performs stochastic gradient descent on the weights vector w on
-    minibatches = [minibatch_1, minibatch_2,....,minibatch_N]
-    """  
+    minibatches = [minibatch_1, minibatch_2,....,minibatch_N].
+
+    We are decaying the learning rate after each minibatch. We follow the following rule
+    from http://cilvr.cs.nyu.edu/diglib/lsml/bottou-sgd-tricks-2012.pdf section 5.2:
+
+    delta_k = delta_0 * (1 + delta_0*lmbda*k)**(−1)
+
+    where k is the index of the minibatch and delta_0 is the initial learning rate,
+    and lmbda is another hyperparameter that controls the rate of decay.
+    """ 
+
     ws = []
     delta_ws = []
     for i in range(iters):
         
-        print('Iteration {}'.format(i+1))
+        print('Iteration {0}/{1}'.format(i+1, iters))
 
         delta_w = 0.0
         w_new = defaultdict(float)
-        
+        learning_rates = list()
         if bar and not (i==iters-1 and log_last): bar = progressbar.ProgressBar(max_value=len(minibatches))
         
         for k, minibatch in enumerate(minibatches):
             
+            if i==0:
+                delta_k = delta_0 * (1 + delta_0*(lmbda*(i+1))*k)**(-1) # this is delta_k = delta_0 when k=0
+            else: 
+                delta_k = delta_0 * (1 + delta_0*(lmbda*(i+1))*(k+1))**(-1) # this is delta_k = delta_0 when k=0
+            
+            learning_rates.append(delta_k)
+
             if bar and not (i==iters-1 and log_last): bar.update(k)
 
             for l, parse in enumerate(minibatch):
                 
-                
+                # unpack parse                
                 target_forest, ref_forest, src_fsa, tgt_sent = parse
 
                 
@@ -217,7 +236,7 @@ def sgd_minibatches(iters, delta, w, minibatches=[],
                 expected_features_D_xy = expected_feature_vector(ref_forest, I_ref, O_ref, ref_edge2fmap)
 
                 # update w
-                w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta, regularizer=regularizer)
+                w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta_k, regularizer=regularizer)
                 
                 # print('\n')
                 # for k in sorted(w_step.keys()):
@@ -255,9 +274,10 @@ def sgd_minibatches(iters, delta, w, minibatches=[],
             # print('\n')
 
             # hack: scale weights so that they are at most of the scale 10**scale_weight
-            abs_max = max(map(abs, w_new.values()))
-            for k, v in w_new.items():
-                w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
+            if scale_weight:
+                abs_max = max(map(abs, w_new.values()))
+                for k, v in w_new.items():
+                    w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
 
             w = w_new        
             ws.append(w)
@@ -267,6 +287,8 @@ def sgd_minibatches(iters, delta, w, minibatches=[],
             
         if bar and not (i==iters-1 and log_last): bar.finish()
         
+        print('Learning rates: {}'.format(learning_rates))
+
         if check_convergence:
             print('delta w = {}\n'.format(delta_ws))
 
