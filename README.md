@@ -1,5 +1,5 @@
 # Machine-Translation-with-CRFs
-Project 2 of NLP2
+Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project description](readings/project2.pdf) or the [paper](readings/Blunsom08.pdf) that partly inspired it.
 
 ## How-to
 
