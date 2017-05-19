@@ -11,6 +11,8 @@ Learning rate:
 	  γt = γ0 (1 + γ0*λ*t)**(−1)
 
 Annealing:
-	Use BLEU score to determine a weight alpha for each translation. Then sample from a rescaled distribution using this alpha: sample ~p(y,d|x)^alpha which is proportional to exp(alpha * w^T phi(x,y,d)).
+	Use BLEU score to determine a weight alpha for each translation. 
+	Then sample from a rescaled distribution using this alpha: 
+	sample ~p(y,d|x)^alpha which is proportional to exp(alpha * w^T phi(x,y,d)).
 
 	
