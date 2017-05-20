@@ -5,24 +5,28 @@ from features import weight_function
 import progressbar
 
 loadpath = 'data/dev1.zh-en'
-# savepath = 'prediction/100/'
-savepath = 'prediction/200/'
-# savepath = 'prediction/1k/'
-weightpath = '../parses/eps-200/trained-'
-# weightpath = '../parses/eps-100/trained-'
+savepath = 'prediction/2k/'
+weightpath = '../parses/eps-2k/weights/lr-20/trained-2-'
+w = load_weights(weightpath)
+
 
 # Parsepath should be set to the path of the parses of the chinese development sentences in dev1.zh-en, generated
 # in the same way as the training sentences. Note: we no longer need the development sentence lenghts
 # from the folder dev123_lengths! We are using the epsilon constraint now.
 
 # parsepath = '../parses/eps-100/'
-parsepath = '../parses/eps/' 
+parsepath = '../parses/eps-2k/' 
 
 parses = [load_parses_separate(parsepath, k) for k in range(100)]
 
-def predict(parses, sample=False):
+
+
+def predict(parses, w, sample=False, scale_weights=False):
 	
-	w = load_weights(weightpath)[-1]
+	if scale_weights:
+		for k, v in w.items():
+			w[k] = scale_weights * v
+
 	f = open(savepath + 'viterbi-predictions2.txt', 'w')
 	if sample: g = open(savepath + 'sampled-predictions.txt', 'w')
 
@@ -37,7 +41,7 @@ def predict(parses, sample=False):
 
 		### D_n(x) ###
 		tgt_edge2fmap, _ = featurize_edges(target_forest, src_fsa,
-		                                   sparse_del=True, sparse_ins=True, sparse_trans=True)
+										   sparse_del=True, sparse_ins=True, sparse_trans=True)
 
 		# recompute edge weights
 		tgt_edge_weights = {edge: np.exp(weight_function(edge, tgt_edge2fmap[edge], w)) for edge in target_forest}
@@ -50,7 +54,7 @@ def predict(parses, sample=False):
 
 		### D(x,y) ###
 		ref_edge2fmap, _ = featurize_edges(ref_forest, src_fsa,
-		                                   sparse_del=True, sparse_ins=True, sparse_trans=True)
+										   sparse_del=True, sparse_ins=True, sparse_trans=True)
 
 		# recompute edge weights
 		ref_edge_weights = {edge: np.exp(weight_function(edge, ref_edge2fmap[edge], w)) for edge in ref_forest}
@@ -86,6 +90,8 @@ def predict(parses, sample=False):
 
 	bar.finish()
 
-predict(parses)
+
+
+predict(parses, w)
 
 		

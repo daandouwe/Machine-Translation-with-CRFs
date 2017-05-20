@@ -31,12 +31,12 @@ for feature in fset:
 
 # partition the parses in minibatches each of size 15 (e.g.)
 minibatches = partition(parses, 30)
-w_trained, delta_ws = sgd_minibatches(4, 10, w_init, minibatches=minibatches, 
+w_trained, delta_ws = sgd_minibatches(4, 20, w_init, minibatches=minibatches, 
                                       sparse=True, bar=True, log=False, log_last=True,
                                       check_convergence=True, scale_weight=3, regularizer=False,
-                                      lmbda=2.0)
+                                      lmbda=0.2, savepath='../parses/eps-2k/weights/lr-20/')
 
-save_weights(w_trained, '../parses/eps-2k/trained-')
+save_weights(w_trained, '../parses/eps-2k/weights/lr-20/trained-')
 
 # printing for verification
 w = w_trained[-1]

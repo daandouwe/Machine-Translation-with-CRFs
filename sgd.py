@@ -42,7 +42,8 @@ def sgd_minibatch(iters, delta, w, minibatch=[],
                   prob_log=False, log_last=False,
                   check_convergence=False,
                   scale_weight=4,
-                  regularizer=False):
+                  regularizer=False,
+                  savepath=False):
     """
     Performs stochastic gradient descent on the weights vector w
     on a minibatch = [parses_1,parses_2,...,parses_N]
@@ -148,7 +149,8 @@ def sgd_minibatch(iters, delta, w, minibatch=[],
         if check_convergence:
             print('delta w = {}\n'.format(delta_w))
 
-        save_weights(w, '../parses/eps/trained-{}-'.format(i+1))
+        if savepath:
+            save_weights(w, savepath + 'trained-{}-'.format(i+1))
 
     return ws, delta_ws
 
@@ -159,7 +161,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
                     check_convergence=False,
                     scale_weight=False,
                     regularizer=False,
-                    lmbda=2.0):
+                    lmbda=2.0,
+                    savepath=False):
     """
     Performs stochastic gradient descent on the weights vector w on
     minibatches = [minibatch_1, minibatch_2,....,minibatch_N].
@@ -179,12 +182,12 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
         
         print('Iteration {0}/{1}'.format(i+1, iters))
 
-        delta_w = 0.0
-        w_new = defaultdict(float)
         learning_rates = list()
         if bar and not (i==iters-1 and log_last): bar = progressbar.ProgressBar(max_value=len(minibatches))
         
         for k, minibatch in enumerate(minibatches):
+            delta_w = 0.0
+            w_new = defaultdict(float)
             
             delta_k = delta_0 * (1 + delta_0*(lmbda*(i*len(minibatches)+k)))**(-1) # this is delta_k = delta_0 when k=0 and i=0
             
@@ -240,10 +243,10 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
                 #     print('{}'.format(k).ljust(25) + '{}'.format(w_step[k]))
                 # print('\n')
 
+                # the update is averaged over the minibatch
                 delta_w += d_w / len(minibatch)
                 for feature, value in w_step.items():
                     w_new[feature] += value / len(minibatch)
-                
 
                 if log or (i==iters-1 and log_last):
                     print("x = '{}'".format(src_fsa.sent))
@@ -264,7 +267,6 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
 
             if bar and not (i==iters-1 and log_last): bar.update(k+1)
             
-
             # print('\n')
             # for k in sorted(w.keys()):
             #     print('{}'.format(k).ljust(25) + '{}'.format(w[k]))
@@ -280,8 +282,9 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
             ws.append(w)
             delta_ws.append(delta_w)
 
-            save_weights(w, '../parses/eps/trained-{}-'.format(i+1))
-            
+        if savepath:
+            save_weights(w, savepath + 'trained-{}-'.format(i+1))
+                
         if bar and not (i==iters-1 and log_last): bar.finish()
         
         print('Learning rates: {}'.format(learning_rates))
