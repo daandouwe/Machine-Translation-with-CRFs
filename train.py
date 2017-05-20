@@ -10,9 +10,9 @@ from predict import predict
 # savepath = '../parses/29-sents-2-translations-sparse/'
 # savepath = '../parses/eps-100/'
 savepath = '../parses/eps-2k/'
-predictpath =  'prediction/2k/'
+predictpath =  'prediction/2k/shuffle-200/'
 
-parses = [load_parses_separate(savepath, k) for k in range(60)]
+parses = [load_parses_separate(savepath, k) for k in range(200)]
 
 lexicon = load_lexicon(savepath)
 
@@ -34,12 +34,12 @@ for feature in fset:
 
 
 # partition the parses in minibatches each of size 15 (e.g.)
-k = 20
+k = 50
 minibatches = partition(parses, k)
-w_trained, delta_ws = sgd_minibatches(30, 5, w_init, minibatches=minibatches, k=k, parses=parses, shuffle=True,
+w_trained, delta_ws = sgd_minibatches(30, 5, w_init, minibatches=minibatches, k=k, parses=parses, shuffle=False,
                                       sparse=True, bar=True, log=False, log_last=True,
                                       check_convergence=True, scale_weight=1, regularizer=False,
-                                      lmbda=1, savepath=savepath, prediction=predictpath)
+                                      lmbda=20, savepath=savepath, prediction=predictpath)
 
 # printing for verification
 w = w_trained[-1]
