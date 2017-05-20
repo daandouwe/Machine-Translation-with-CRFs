@@ -8,6 +8,8 @@ from collections import defaultdict, deque
 from itertools import chain
 from util import write_derrivation, joint_prob, joint_prob_log, save_weights
 import progressbar
+from predict import predict
+import itertools
 
 
 def update_w(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1, regularizer=False):
@@ -162,7 +164,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
                     scale_weight=False,
                     regularizer=False,
                     lmbda=2.0,
-                    savepath=False):
+                    savepath=False,
+                    prediction=False):
     """
     Performs stochastic gradient descent on the weights vector w on
     minibatches = [minibatch_1, minibatch_2,....,minibatch_N].
@@ -278,9 +281,13 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
                 for k, v in w_new.items():
                     w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
 
-            w = w_new        
-            ws.append(w)
-            delta_ws.append(delta_w)
+        w = w_new        
+        ws.append(w)
+        delta_ws.append(delta_w)
+
+        if prediction and i%5==0: # save every 5 iterations
+            parses = list(itertools.chain.from_iterable(minibatches))
+            predict(parses, w, i, prediction)
 
         if savepath:
             save_weights(w, savepath + 'trained-{}-'.format(i+1))
