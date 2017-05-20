@@ -186,12 +186,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
         
         for k, minibatch in enumerate(minibatches):
             
-            # if i==0:
-            #     delta_k = delta_0 * (1 + delta_0*(lmbda*(i+1))*k)**(-1) # this is delta_k = delta_0 when k=0
-            # else: 
-                # delta_k = delta_0 * (1 + delta_0*(lmbda*(i+1))*(k+1))**(-1) # this is delta_k = delta_0 when k=0
-
-            delta_k = delta_0 * (1 + delta_0*(lmbda*(i*len(minibatches)+k)))**(-1) # this is delta_k = delta_0 when k=0
+            delta_k = delta_0 * (1 + delta_0*(lmbda*(i*len(minibatches)+k)))**(-1) # this is delta_k = delta_0 when k=0 and i=0
             
             learning_rates.append(delta_k)
 
