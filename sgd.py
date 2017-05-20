@@ -159,7 +159,7 @@ def sgd_minibatch(iters, delta, w, minibatch=[],
     return ws, delta_ws
 
 
-def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], k=20,
+def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                     sparse=False, log=False, bar=True, 
                     prob_log=False, log_last=False,
                     check_convergence=False,
@@ -192,7 +192,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], k=20,
         if bar and not (i==iters-1 and log_last): bar = progressbar.ProgressBar(max_value=len(minibatches))
             
         if shuffle:
-            minibatches = partition(random.sample(parses, len(parses)), 20)
+            minibatches = partition(random.sample(parses, len(parses)), batch_size)
 
         for k, minibatch in enumerate(minibatches):
             delta_w = 0.0
@@ -303,7 +303,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], k=20,
         print('Learning rates: {}'.format(learning_rates))
 
         if check_convergence:
-            print('delta w = {}\n'.format(delta_ws))
+            print('delta w = {}\n'.format(delta_ws / len(w.keys())))
 
     return ws, delta_ws
 

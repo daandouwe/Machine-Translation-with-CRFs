@@ -33,10 +33,9 @@ for feature in fset:
     w_init[feature] = 1e-2
 
 
-# partition the parses in minibatches each of size 15 (e.g.)
 k = 50
 minibatches = partition(parses, k)
-w_trained, delta_ws = sgd_minibatches(30, 5, w_init, minibatches=minibatches, k=k, parses=parses, shuffle=False,
+w_trained, delta_ws = sgd_minibatches(30, 5, w_init, minibatches=minibatches, batch_size=k, parses=parses, shuffle=True,
                                       sparse=True, bar=True, log=False, log_last=True,
                                       check_convergence=True, scale_weight=1, regularizer=False,
                                       lmbda=20, savepath=savepath, prediction=predictpath)
