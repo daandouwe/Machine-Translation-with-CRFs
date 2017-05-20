@@ -294,16 +294,16 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
 
         if bar and not (i==iters-1 and log_last): bar.finish()
 
-        if prediction and i%5==0: # save every 5 iterations
-            predict(parses, w, i, prediction)
-
         if savepath:
             save_weights(w, savepath + 'trained-{}-'.format(i+1))
                         
         print('Learning rates: {}'.format(learning_rates))
 
         if check_convergence:
-            print('delta w = {}\n'.format(delta_ws / len(w.keys())))
+            print('delta w = {}\n'.format([ds / len(w.keys()) for ds in delta_ws]))
+
+        if prediction and i%5==0: # save every 5 iterations
+            predict(parses, w, i, prediction)
 
     return ws, delta_ws
 
