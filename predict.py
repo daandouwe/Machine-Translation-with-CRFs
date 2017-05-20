@@ -2,23 +2,35 @@ from util import save_weights, load_weights
 from processing import *
 from graph import *
 from features import weight_function
-
+import progressbar
 
 loadpath = 'data/dev1.zh-en'
-lengthpath = 'dev123_lengths/dev1.zh-en.en.lengths'
-savepath = 'prediction/'
-weightpath = '../parses/eps-100/trained-'
-parsepath = '../parses/eps-100/'
+# savepath = 'prediction/100/'
+savepath = 'prediction/200/'
+# savepath = 'prediction/1k/'
+weightpath = '../parses/eps-200/trained-'
+# weightpath = '../parses/eps-100/trained-'
 
-parses = [load_parses_separate(parsepath, k) for k in range(45)]
+# Parsepath should be set to the path of the parses of the chinese development sentences in dev1.zh-en, generated
+# in the same way as the training sentences. Note: we no longer need the development sentence lenghts
+# from the folder dev123_lengths! We are using the epsilon constraint now.
 
-def predict(parses):
+# parsepath = '../parses/eps-100/'
+parsepath = '../parses/eps/' 
+
+parses = [load_parses_separate(parsepath, k) for k in range(100)]
+
+def predict(parses, sample=False):
 	
 	w = load_weights(weightpath)[-1]
-	f = open(savepath + 'viterbi-predictions.txt', 'w')
-	g = open(savepath + 'sampled-predictions.txt', 'w')
+	f = open(savepath + 'viterbi-predictions2.txt', 'w')
+	if sample: g = open(savepath + 'sampled-predictions.txt', 'w')
 
-	for parse in parses:
+	print('predicting...')
+	bar = progressbar.ProgressBar(max_value=len(parses))
+
+	for k, parse in enumerate(parses):
+		bar.update(k)
 		# unpack parse                
 		target_forest, ref_forest, src_fsa, tgt_sent = parse
 
@@ -54,17 +66,25 @@ def predict(parses):
 		candidates = write_derrivation(d)
 		viterbi_translation = candidates.pop()
 		
-		n = 100
-		d, count = sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
-		candidates = write_derrivation(d)
-		sampled_translation = candidates.pop()
+		if sample: 
+			n = 100
+			d, count = sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
+			candidates = write_derrivation(d)
+			sampled_translation = candidates.pop()
 
-		f.write(viterbi_translation + '\n')
-		g.write(sampled_translation + '\n')
+		if k==len(parses)-1: # not enter on last line, otherwise perl script crashes
+			f.write(viterbi_translation)
+			if sample: g.write(sampled_translation)
+		else:
+			f.write(viterbi_translation + '\n')
+			if sample: g.write(sampled_translation + '\n')
+
+		bar.update(k+1)
 
 	f.close()
-	g.close()
+	if sample: g.close()
 
+	bar.finish()
 
 predict(parses)
 

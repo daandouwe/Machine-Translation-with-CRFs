@@ -1,11 +1,12 @@
 import pickle
 from util import load_weights
 
-savepath = '../parses/eps/trained-2-'
-savepath10 = '../parses/eps/trained-10-'
+savepath = '../parses/eps-200/trained-'
 
-w = load_weights(savepath)
-w10 = load_weights(savepath)
+w = load_weights(savepath)[-1]
 
-for k in sorted(w.keys()):
-	print('{}'.format(k).ljust(25) + '{}'.format(w10[k]))
+# for k in sorted(w.keys()):
+# 	print('{}'.format(k).ljust(25) + '{}'.format(w[k]))
+
+for k, v in sorted(w.items(), key=lambda x: x[1], reverse=True):
+	print('{}'.format(k).ljust(25) + '{}'.format(v))
