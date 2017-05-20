@@ -13,6 +13,14 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 * SGD has been updated so that we scale the learning rate each time we make a weight-vector update (i.e. each minibatch). See section 5.2 of [this paper](readings/bottou-sgd-tricks-2012.pdf) on SGD-tricks. This introduces a new hyperparameter `lmbda` which controls the rate of scaling. We now start with a high learning rate of around 1 to 10, and let the formula scale this down.
 
+## Some notes on training
+
+* Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don?t ?fire? for one training example.
+
+* Using `shuffle=True` we reshuffle the parses and partition these into new minibatches at each iteration. This drastically improves ?movement?: compare the sentences in [shuffle](prediction/2k/shuffle) to those in [no-shuffle](prediction/2k/no-shuffle) and see the difference!
+
+* When we shuffle, we should let the learning rate decay more rapidly. For example `delta_0=10` and `lmbda=50`. Then we start large, but decay rapidly.
+
 ## TODO
 
 * Mess around training on different sizes of corpus, with different mini-batch sizes, learning-rates, scale_weights, and regularizers.
