@@ -17,7 +17,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 * Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.
 
-* Using shuffle=True we reshuffle the parses and partition these into new minibatches at each iteration. This drastically improves 'movement'. Compare the sentences in [shuffle](prediction/2k/shuffle) to those in [no-shuffle](prediction/2k/no-shuffle) and see the difference: the the `no-shuffle` sentences are almost stationary after the first iteration except for some insertions and deletions of 'the'; the `shuffle` sentences on the other continue to change drastically each iteration. I think our best shot is with `shuffle` for this reason: we just need to take this 'movement' behaviour into account (see note below).
+* Using `shuffle=True` we reshuffle the parses and partition these into new minibatches at each iteration. This drastically improves 'movement' of predicted translation sentences over iterations. Compare the sentences in [shuffle](prediction/2k/shuffle) to those in [no-shuffle](prediction/2k/no-shuffle) and see the difference: the the `no-shuffle` sentences are almost stationary after the first iteration except for some insertions and deletions of 'the'; the `shuffle` sentences on the other continue to change drastically each iteration. I think our best shot is with `shuffle` for this reason: we just need to take this 'movement' behaviour into account (see note below).
 
 * When we shuffle, we should let the learning rate decay more rapidly. For example `delta_0=10` and `lmbda=50`. Then we start large, but decay rapidly.
 
