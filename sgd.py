@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+import random
 from lib.formal import Symbol, Terminal, Nonterminal, Span, Rule, CFG, FSA
 from features import *
 from processing import *
@@ -10,6 +11,7 @@ from util import write_derrivation, joint_prob, joint_prob_log, save_weights
 import progressbar
 from predict import predict
 import itertools
+from util import partition
 
 
 def update_w(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1, regularizer=False):
@@ -157,7 +159,7 @@ def sgd_minibatch(iters, delta, w, minibatch=[],
     return ws, delta_ws
 
 
-def sgd_minibatches(iters, delta_0, w, minibatches=[], 
+def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], k=20,
                     sparse=False, log=False, bar=True, 
                     prob_log=False, log_last=False,
                     check_convergence=False,
@@ -165,7 +167,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
                     regularizer=False,
                     lmbda=2.0,
                     savepath=False,
-                    prediction=False):
+                    prediction=False,
+                    shuffle=False):
     """
     Performs stochastic gradient descent on the weights vector w on
     minibatches = [minibatch_1, minibatch_2,....,minibatch_N].
@@ -187,7 +190,10 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
 
         learning_rates = list()
         if bar and not (i==iters-1 and log_last): bar = progressbar.ProgressBar(max_value=len(minibatches))
-        
+            
+        if shuffle:
+            minibatches = partition(random.sample(parses, len(parses)), 20)
+
         for k, minibatch in enumerate(minibatches):
             delta_w = 0.0
             w_new = defaultdict(float)
@@ -281,19 +287,19 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[],
                 for k, v in w_new.items():
                     w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
 
-        w = w_new        
-        ws.append(w)
-        delta_ws.append(delta_w)
+            # update after each minibatch
+            w = w_new        
+            ws.append(w)
+            delta_ws.append(delta_w)
+
+        if bar and not (i==iters-1 and log_last): bar.finish()
 
         if prediction and i%5==0: # save every 5 iterations
-            parses = list(itertools.chain.from_iterable(minibatches))
             predict(parses, w, i, prediction)
 
         if savepath:
             save_weights(w, savepath + 'trained-{}-'.format(i+1))
-                
-        if bar and not (i==iters-1 and log_last): bar.finish()
-        
+                        
         print('Learning rates: {}'.format(learning_rates))
 
         if check_convergence:
