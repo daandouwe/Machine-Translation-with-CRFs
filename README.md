@@ -15,7 +15,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 ## Some notes on the types of parses
 
-Let's train with *three types of parses*: small sentences of length 10, with only 2 translations (plus `-EPS`, so 3); small sentences of length 10, with only 4 translations (plus `-EPS`, so 5); long sentences of length 15, with only 2 translations (plus `-EPS`, so 3). For now we put `max_sents=20000`. These will make interesting comparisons.
+Let's train with *three types of parses*: small sentences of length 10, with only 2 translations (plus `-EPS-`, so 3); small sentences of length 10, with only 4 translations (plus `-EPS-`, so 5); long sentences of length 15, with only 2 translations (plus `-EPS-`, so 3). For now we put `max_sents=20000`. These will make interesting comparisons.
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=20000)`
