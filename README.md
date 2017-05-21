@@ -15,7 +15,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 ## Some notes on the types of parses
 
-Let's train with *three types of parses*: small sentences of length 10, with only 2 translations (plus `-EPS-`, so 3); small sentences of length 10, with only 4 translations (plus `-EPS-`, so 5); long sentences of length 15, with only 2 translations (plus `-EPS-`, so 3). For now we put `max_sents=20000`. These will make interesting comparisons.
+Let's train with *three types of parses*: small sentences of length 10, with only 2 translations (plus `-EPS`, so 3); small sentences of length 10, with only 4 translations (plus `-EPS`, so 5); long sentences of length 15, with only 2 translations (plus `-EPS`, so 3). For now we put `max_sents=20000`. These will make interesting comparisons.
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=20000)`
@@ -33,6 +33,9 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 
 NOTE: please note that when you select only the short sentences you get different sizes for the corpus! 
+
+* `new!` Tim has made a parallel version of save-parses! You can now use the branch parallel to check it out for yourself. If you have 4 cores you can simply run `python save-parse.py --num-cores 8` and see the magic of parallel computing unfold in front of your eyes. Warning: expect massive speedup (5x or more) and some beautiful wind-tunnel effects from your desktop/laptop.
+
 ## Some notes on training
 
 * Every experiment I've performed so far unequivocally shows that averaging the update of `w` over a minibatch is *bad*. Instead we should update `w` *sentence per sentence*.  ~Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.~ 
@@ -61,4 +64,4 @@ See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our b
 
 ## Some issues/questions
 
-* The problem with derivations for which the `p(y,d|x) = nan` is this: the weights vector `w`. This *still* occurs, even with the above described hack. It *only* occurs with long sentences though. I think because for a long sentence, the derivation has many edges. And then `sum([estimated_weights[edge] for edge in derrivation])` gets upset, which we use in `join_prob` to compute the  `p(y,d|x)`. NOTE: This is not *really* an isse: we still get Viterbi estimates! We just cannot compute the correct probability.
+* The problem with derivations for which the `p(y,d|x) = nan` is this: the weights vector `w`. This *still* occurs, even with the above described hack. It *only* occurs with long sentences though. I think because for a long sentence, the derivation has many edges. And then `sum([estimated_weights[edge] for edge in derrivation])` gets upset, which we use in `join_prob` to compute the  `p(y,d|x)`. NOTE: This is not *really* an issue: we still get Viterbi estimates! We just cannot compute the correct probability.
