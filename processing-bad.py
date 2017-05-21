@@ -216,7 +216,9 @@ def parse_forests(src_sent, tgt_sent, lexicon):
     Note: uses the length constraint approach.
     """
     src_fsa = libitg.make_fsa(src_sent)
+    tgt_fsa = libitg.make_fsa(tgt_sent)
     src_cfg = libitg.make_source_side_itg(lexicon)
+
     forest = earley(src_cfg, src_fsa, 
                     start_symbol=Nonterminal('S'), 
                     sprime_symbol=Nonterminal("D(x)"),
@@ -224,7 +226,6 @@ def parse_forests(src_sent, tgt_sent, lexicon):
     
     projected_forest = libitg.make_target_side_itg(forest, lexicon)
     
-    tgt_fsa = libitg.make_fsa(tgt_sent)
     ref_forest = earley(projected_forest, tgt_fsa, 
                         start_symbol=Nonterminal("D(x)"), 
                         sprime_symbol=Nonterminal('D(x,y)'),
@@ -235,7 +236,7 @@ def parse_forests(src_sent, tgt_sent, lexicon):
                            start_symbol=Nonterminal("D(x)"), 
                            sprime_symbol=Nonterminal("D_n(x)"))
     
-    return target_forest, ref_forest, src_fsa
+    return target_forest, ref_forest, src_fsa, tgt_sent
 
 def parse_forests_eps(src_sent, tgt_sent, lexicon):
     """
@@ -243,6 +244,7 @@ def parse_forests_eps(src_sent, tgt_sent, lexicon):
     Note: uses the alternative epsilon-insertion constraint.
     """
     src_fsa = libitg.make_fsa(src_sent)
+    tgt_fsa = libitg.make_fsa(tgt_sent)
     src_cfg = libitg.make_source_side_itg(lexicon)
     _Dx = earley(src_cfg, src_fsa, 
                  start_symbol=Nonterminal('S'), 
@@ -258,14 +260,37 @@ def parse_forests_eps(src_sent, tgt_sent, lexicon):
 
     target_forest = libitg.make_target_side_itg(_Dix, lexicon)
 
-    tgt_fsa = libitg.make_fsa(tgt_sent)
-
     ref_forest = earley(target_forest, tgt_fsa, 
                         start_symbol=Nonterminal("D_n(x)"), 
                         sprime_symbol=Nonterminal('D(x,y)'))
     
     return target_forest, ref_forest, src_fsa, tgt_sent
 
+
+def parse_forests_finite(src_sent, tgt_sent, lexicon):
+    """
+    Parses sentence using latest version of ITG.
+    See notebook Fast-Parsing on NLP2 page for more details.
+    """
+    src_fsa = libitg.make_fsa(src_sent)
+    tgt_fsa = libitg.make_fsa(tgt_sent)
+    src_cfg = libitg.make_source_side_finite_itg(lexicon)
+
+    _Dx = libitg.earley(src_cfg, src_fsa, 
+                        start_symbol=Nonterminal('S'), 
+                        sprime_symbol=Nonterminal("D(x)"),
+                        clean=True)
+
+    # Dx = target_forest
+    Dx = libitg.make_target_side_finite_itg(_Dx, lexicon)
+
+    # Dxy = ref_forest
+    Dxy = libitg.earley(Dx, tgt_fsa,
+                        start_symbol=Nonterminal("D(x)"), 
+                        sprime_symbol=Nonterminal('D(x,y)'),
+                        clean=True)
+
+    return Dx, Dxy, src_fsa, tgt_sent
 
 ### SAVING AND LOADING ###
 
@@ -287,7 +312,7 @@ def save_parses(corpus, lexicon, savepath):
     f.close()
 
 
-def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, sparse=True, start=0):
+def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, finite=False, sparse=True, start=0):
     """
     For each sentence k in corpus we parse and save the triple of needed parses 
     as pkl object at savepath/parses-k.pkl.
@@ -305,6 +330,8 @@ def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, 
         bar.update(k)
         if eps:
             parses = parse_forests_eps(src_sent, tgt_sent, lexicon)
+        if finite:
+            parses = parse_forests_finite(src_sent, tgt_sent, lexicon)
         else:
             parses = parse_forests(src_sent, tgt_sent, lexicon)
         f = open(savepath + 'parses-{}.pkl'.format(k+start), 'wb')
@@ -314,9 +341,9 @@ def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, 
         # update fset
         tgt_forest, ref_forest, src_fsa, tgt_sent = parses
         _, fset1 = featurize_edges(ref_forest, src_fsa, 
-                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src, finite=finite)
         _, fset2 = featurize_edges(tgt_forest, src_fsa, 
-                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src, finite=finite)
         fset.update(fset1 | fset2)
         
         bar.update(k+1)

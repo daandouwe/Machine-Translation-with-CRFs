@@ -15,9 +15,9 @@ ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct
 
 # load corpus
 corpus = read_data(max_sents=20000)
-start = 1400
+start = 0
 # get only short sentences for ease of training
-corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10][start:]
+corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15][start:]
 
 print(len(corpus))
 # always save all the english sentences for reference (computing the BLEU)
