@@ -380,7 +380,7 @@ def get_full_fset(parses, src_tgt, tgt_src, sparse=False):
 
 def featurize_edges(forest, src_fsa,
                     sparse_del=False, sparse_ins=False, sparse_trans=False,
-                    finite=True,
+                    finite=False,
                     src_tgt=defaultdict(lambda: defaultdict(float)),
                     tgt_src=defaultdict(lambda: defaultdict(float)),
                     eps=Terminal('-EPS-')) -> dict:

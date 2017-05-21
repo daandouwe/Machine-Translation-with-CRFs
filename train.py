@@ -16,9 +16,7 @@ predictpath =  'prediction/2k/'
 parses = [load_parses_separate(savepath, k) for k in range(20)]
 
 lexicon = load_lexicon(savepath)
-print('lexicon is loaded')
 fset = load_featureset(savepath)
-print('feature set is loaded')
 
 # print('number of features: {}\n'.format(len(fset)))
 # print('\n'.join(sorted(list(fset))))
@@ -31,7 +29,6 @@ print('feature set is loaded')
 # initialize weights uniformly
 w_init = defaultdict(float)
 for feature in fset:
-    print('passed feature')
     w_init[feature] = 1e-2
 
 
@@ -45,7 +42,6 @@ w_trained, delta_ws = sgd_minibatches(iters=6, delta_0=10, w=w_init, minibatches
                                       prediction=predictpath, prediction_length=200)
 
 # printing for verification
-print('End')
 w = w_trained[-1]
 for k, v in sorted(w.items(), key=lambda x: x[1], reverse=True):
 	print('{}'.format(k).ljust(25) + '{}'.format(v))

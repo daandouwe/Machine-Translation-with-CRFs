@@ -1,5 +1,6 @@
 import pickle
 from util import load_weights
+from processing import load_parses_separate
 
 savepath1 = '../parses/eps-2k/weights/full/trained-1-'
 savepath2 = '../parses/eps-2k/weights/full/trained-2-'

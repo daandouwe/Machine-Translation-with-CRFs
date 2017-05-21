@@ -312,7 +312,7 @@ def save_parses(corpus, lexicon, savepath):
     f.close()
 
 
-def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, finite=False, sparse=True):
+def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, finite=False, sparse=True, start=0):
     """
     For each sentence k in corpus we parse and save the triple of needed parses 
     as pkl object at savepath/parses-k.pkl.
@@ -334,16 +334,16 @@ def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, 
             parses = parse_forests_finite(src_sent, tgt_sent, lexicon)
         else:
             parses = parse_forests(src_sent, tgt_sent, lexicon)
-        f = open(savepath + 'parses-{}.pkl'.format(k), 'wb')
+        f = open(savepath + 'parses-{}.pkl'.format(k+start), 'wb')
         pickle.dump(parses, f, protocol=4)
         f.close()
 
         # update fset
         tgt_forest, ref_forest, src_fsa, tgt_sent = parses
         _, fset1 = featurize_edges(ref_forest, src_fsa, 
-                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src, finite=finite)
         _, fset2 = featurize_edges(tgt_forest, src_fsa, 
-                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src, finite=finite)
         fset.update(fset1 | fset2)
         
         bar.update(k+1)
