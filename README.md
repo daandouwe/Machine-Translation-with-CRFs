@@ -29,7 +29,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 ## Some results
 
-See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our best result so far! This has been achieved by training 1 iteration over 1300 sentences of maximal length 9, with minibatch size 1, `delta_0=10`, `lmbda=0.01`, `scale_weight=2` and `regularizer=False`. See the [correct translations](prediction/2k/full/reference.txt) for reference. (Also note that later iterations get worse which you can see [here](prediction/2k/full/viterbi-predictions-1.txt).) Lastly: we achieve a BLEU score of 3.44 on these translations (hurray!): `BLEU = 3.44, 49.8/6.2/1.1/0.5 (BP=0.967, ratio=0.968, hyp_len=1222, ref_len=1263)`.
+See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our best result so far! This has been achieved by training 1 iteration over 1300 sentences of maximal length 9 parsed with `eps=True` and maximally 3 epsilon insertions, with minibatch size 1, `delta_0=10`, `lmbda=0.01`, `scale_weight=2` and `regularizer=False`. See the [correct translations](prediction/2k/full/reference.txt) for reference. (Also note that later iterations get worse which you can see [here](prediction/2k/full/viterbi-predictions-1.txt).) Lastly: we achieve a BLEU score of 3.44 on these translations (hurray!): `BLEU = 3.44, 49.8/6.2/1.1/0.5 (BP=0.967, ratio=0.968, hyp_len=1222, ref_len=1263)`.
 
 ## TODO
 
