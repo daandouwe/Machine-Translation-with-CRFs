@@ -5,8 +5,8 @@ from features import weight_function
 import progressbar
 
 loadpath = 'data/dev1.zh-en'
-savepath = 'prediction/2k/'
-weightpath = '../parses/eps-2k/weights/lr-20/trained-5-'
+savepath = 'prediction/2k/full/'
+weightpath = '../parses/eps-2k/weights/full/trained-10-'
 
 # Parsepath should be set to the path of the parses of the chinese development sentences in dev1.zh-en, generated
 # in the same way as the training sentences. Note: we no longer need the development sentence lenghts
@@ -18,17 +18,20 @@ parsepath = '../parses/eps-2k/'
 def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 	
 	if scale_weights:
-		for k, v in w.items():
-			w[k] = scale_weights * v
+		for l, v in w.items():
+			w[l] = scale_weights * v
+		f = open(savepath + 'viterbi-predictions-{0}-{1}x.txt'.format(k, scale_weights), 'w')
+		if sample: g = open(savepath + 'sampled-predictions-{0}-{1}x.txt'.format(k, scale_weights), 'w')
 
-	f = open(savepath + 'viterbi-predictions-{}.txt'.format(k), 'w')
-	if sample: g = open(savepath + 'sampled-predictions.txt', 'w')
+	else:
+		f = open(savepath + 'viterbi-predictions-{0}.txt'.format(k), 'w')
+		if sample: g = open(savepath + 'sampled-predictions-{0}.txt'.format(k), 'w')
 
 	print('predicting...')
 	bar = progressbar.ProgressBar(max_value=len(parses))
 
-	for k, parse in enumerate(parses):
-		bar.update(k)
+	for l, parse in enumerate(parses):
+		bar.update(l)
 		# unpack parse                
 		target_forest, ref_forest, src_fsa, tgt_sent = parse
 
@@ -70,14 +73,14 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 			candidates = write_derrivation(d)
 			sampled_translation = candidates.pop()
 
-		if k==len(parses)-1: # not enter on last line, otherwise perl script crashes
+		if l==len(parses)-1: # not enter on last line, otherwise perl script crashes
 			f.write(viterbi_translation)
 			if sample: g.write(sampled_translation)
 		else:
 			f.write(viterbi_translation + '\n')
 			if sample: g.write(sampled_translation + '\n')
 
-		bar.update(k+1)
+		bar.update(l+1)
 
 	f.close()
 	if sample: g.close()
@@ -87,7 +90,7 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 if __name__ == "__main__":
 
 	w = load_weights(weightpath)
-	parses = [load_parses_separate(parsepath, k) for k in range(100)]
-	predict(parses, w, k=5, savepath='prediction/2k/')
+	parses = [load_parses_separate(parsepath, k) for k in range(200)]
+	predict(parses, w, k=10, savepath='prediction/2k/full/', scale_weights=False)
 
 		

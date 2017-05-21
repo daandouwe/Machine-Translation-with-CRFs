@@ -1,11 +1,11 @@
 import pickle
 from util import load_weights
 
-savepath1 = '../parses/eps-2k/weights/lr-20/trained-1-'
-savepath2 = '../parses/eps-2k/weights/lr-20/trained-2-'
-savepath3 = '../parses/eps-2k/weights/lr-20/trained-3-'
-savepath9 = '../parses/eps-2k/weights/lr-20/trained-9-'
-savepath10 = '../parses/eps-2k/weights/lr-20/trained-10-'
+savepath1 = '../parses/eps-2k/weights/full/trained-1-'
+savepath2 = '../parses/eps-2k/weights/full/trained-2-'
+savepath3 = '../parses/eps-2k/weights/full/trained-3-'
+savepath9 = '../parses/eps-2k/weights/full/trained-9-'
+savepath10 = '../parses/eps-2k/weights/full/trained-10-'
 
 w1 = load_weights(savepath1)
 w2 = load_weights(savepath2)
@@ -28,4 +28,4 @@ def check_difference(w1, w2):
 
 # check(w1)
 # compare(w1, w2)
-check_difference(w9, w10)
+check_difference(w1, w2)

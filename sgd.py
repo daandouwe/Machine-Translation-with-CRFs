@@ -22,7 +22,7 @@ def update_w(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1, re
     w_new = defaultdict(float)
     delta_w = 0.0 # holds the sum of deltas
 
-    wmap_l1norm = sum(map(abs, wmap.values()))
+    # wmap_l1norm = sum(map(abs, wmap.values()))
     wmap_l2norm = np.sqrt(sum(np.square(list(wmap.values()))))
 
     for rule in chain(expected_features_D_xy, expected_features_Dn_x):
@@ -296,14 +296,13 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
 
         if savepath:
             save_weights(w, savepath + 'trained-{}-'.format(i+1))
-                        
-        print('Learning rates: {}'.format(learning_rates))
 
         if check_convergence:
-            print('delta w = {}\n'.format([ds / len(w.keys()) for ds in delta_ws]))
+            print('delta w: {}\n'.format([ds / len(w.keys()) for ds in delta_ws]))
+            print('Learning rates: {}'.format(learning_rates))
 
         if prediction and i%5==0: # save every 5 iterations
-            predict(parses, w, i, prediction)
+            predict(parses[0:200], w, i, prediction)
 
     return ws, delta_ws
 
