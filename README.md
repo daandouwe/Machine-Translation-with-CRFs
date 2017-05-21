@@ -17,7 +17,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 * Every experiment I've performed so far unequivocally shows that averaging the update of `w` over a minibatch is *bad*. Instead we should update `w` *sentence per sentence*.  ~Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.~ 
 
-* Multiple iterations do not improve anything. I've repeatedly gotten the best results after only 1 epoch. In fact, after the first epoch, nothing much changes, and the change that we do get is almost alway bad. Like adding `. i i ` at the end of the sentence after the period which you can see happening (here)[prediction/2k/full/viterbi-predictions-1.txt] in the second iteration. I suggest we just use a few (1-4) iterations, and then probably choose the weights we got after the first.
+* Multiple iterations do not improve anything. I've repeatedly gotten the best results after only 1 epoch. In fact, after the first epoch, nothing much changes, and the change that we do get is almost alway bad. Like adding `. i i ` at the end of the sentence after the period which you can see happening [here](prediction/2k/full/viterbi-predictions-1.txt) in the second iteration. I suggest we just use a few (1-4) iterations, and then probably choose the weights we got after the first.
 
 * The choice of learning rate does matter much. I've tried with many values of `delta_0` ranging from 1-100, and they al practically do the same. I've also tried many values of `lmbda` ranging from 5-0.001, and this also does not have a great deal of influence. However, if we do not use minibatches and update per sentence we should choose a small `lmbda`, just to be sure (otherwise we shrink the learning rate really quickly.
 
@@ -29,7 +29,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 ## Some results
 
-See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our best result so far! This has been achieved by training 1 iteration over 1300 sentences of maximal length 9, with minibatch size 1, `delta_0=10`, `lmbda=0.01`, `scale_weight=2` and `regularizer=False`. See the [correct translations](prediction/2k/full/reference.txt) for reference. (Also note that later iterations get worse which you can see (here)[prediction/2k/full/viterbi-predictions-10.txt]. Lastly: we achieve a BLEU score of 3.44 on these translations (hurray!): `BLEU = 3.44, 49.8/6.2/1.1/0.5 (BP=0.967, ratio=0.968, hyp_len=1222, ref_len=1263)`.
+See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our best result so far! This has been achieved by training 1 iteration over 1300 sentences of maximal length 9, with minibatch size 1, `delta_0=10`, `lmbda=0.01`, `scale_weight=2` and `regularizer=False`. See the [correct translations](prediction/2k/full/reference.txt) for reference. (Also note that later iterations get worse which you can see [here](prediction/2k/full/viterbi-predictions-1.txt). Lastly: we achieve a BLEU score of 3.44 on these translations (hurray!): `BLEU = 3.44, 49.8/6.2/1.1/0.5 (BP=0.967, ratio=0.968, hyp_len=1222, ref_len=1263)`.
 
 ## TODO
 
