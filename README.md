@@ -13,6 +13,14 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 * SGD has been updated so that we scale the learning rate each time we make a weight-vector update (i.e. each minibatch). See section 5.2 of [this paper](readings/bottou-sgd-tricks-2012.pdf) on SGD-tricks. This introduces a new hyperparameter `lmbda` which controls the rate of scaling. We now start with a high learning rate of around 1 to 10, and let the formula scale this down.
 
+## Some notes on the types of parses
+
+Let's train with *three types of parses*:
+
+* `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)
+`corpus = read_data(max_sents=20000)`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`
+
 ## Some notes on training
 
 * Every experiment I've performed so far unequivocally shows that averaging the update of `w` over a minibatch is *bad*. Instead we should update `w` *sentence per sentence*.  ~Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.~ 
