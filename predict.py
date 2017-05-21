@@ -5,13 +5,9 @@ from features import weight_function
 import progressbar
 
 loadpath = 'data/dev1.zh-en'
-<<<<<<< HEAD
 savepath = 'prediction/2k/full/'
 weightpath = '../parses/eps-2k/weights/full/trained-10-'
-=======
-savepath = 'prediction/2k/'
-weightpath = '../parses/eps-200/trained-30-'
->>>>>>> origin/master
+
 
 # Parsepath should be set to the path of the parses of the chinese development sentences in dev1.zh-en, generated
 # in the same way as the training sentences. Note: we no longer need the development sentence lenghts
