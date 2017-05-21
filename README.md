@@ -15,11 +15,21 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 ## Some notes on training
 
-* Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.
+* Every experiment I've performed so far unequivocally shows that averaging the update of `w` over a minibatch is *bad*. Instead we should update `w` *sentence per sentence*.  ~Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.~ 
 
-* Using `shuffle=True` we reshuffle the parses and partition these into new minibatches at each iteration. This drastically improves 'movement' of predicted translation sentences over iterations. Compare the sentences in [shuffle](prediction/2k/shuffle) to those in [no-shuffle](prediction/2k/no-shuffle) and see the difference: the the `no-shuffle` sentences are almost stationary after the first iteration except for some insertions and deletions of 'the'; the `shuffle` sentences on the other continue to change drastically each iteration. I think our best shot is with `shuffle` for this reason: we just need to take this 'movement' behaviour into account (see note below).
+* Multiple iterations do not improve anything. I've repeatedly gotten the best results after only 1 epoch. In fact, after the first epoch, nothing much changes, and the change that we do get is almost alway bad. Like adding `. i i ` at the end of the sentence after the period. I suggest we just use a few (1-4) iterations, and then probably choose the weights we got after the first.
 
-* When we shuffle, we should let the learning rate decay more rapidly. For example `delta_0=10` and `lmbda=50`. Then we start large, but decay rapidly.
+* The choice of learning rate does matter much. I've tried with many values of `delta_0` ranging from 1-100, and they al practically do the same. I've also tried many values of `lmbda` ranging from 5-0.001, and this also does not have a great deal of influence. However, if we do not use minibatches and update per sentence we should choose a small `lmbda`, just to be sure (otherwise we shrink the learning rate really quickly.
+
+* The regularizer still does not perform as promised: it does not promote small weights. Nor does it give good translations. Basically it's shit. 
+
+* We should stay with the hack! It's just amazing. The precise scale at which we cut does not matter greatly. Probably, we should just keep 1-3. This has worked fine in every experiment so far.
+ 
+* Shuffling is still ok, but as noted above, multiple iterations do not accomplish much, and so shuffle has not much of a function. [Using `shuffle=True` we reshuffle the parses and partition these into new minibatches at each iteration. This drastically improves 'movement' of predicted translation sentences over iterations. Compare the sentences in [shuffle](prediction/2k/shuffle) to those in [no-shuffle](prediction/2k/no-shuffle) and see the difference: the the `no-shuffle` sentences are almost stationary after the first iteration except for some insertions and deletions of 'the'; the `shuffle` sentences on the other continue to change drastically each iteration. I think our best shot is with `shuffle` for this reason: we just need to take this 'movement' behaviour into account (see note below).]
+
+## Some results
+
+See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our best result so far! This has been achieved by training 1 iteration over 1300 sentences of maximal length 9, with minibatch size 1, `delta_0=10`, `lmbda=0.01`, `scale_weight=2` and `regularizer=False`. See the [correct translations](prediction/2k/full/reference.txt) for reference. (Also note that later iterations get worse). Lastly: we achieve a BLEU score of 3.44 on these translations (hurray!): `BLEU = 3.44, 49.8/6.2/1.1/0.5 (BP=0.967, ratio=0.968, hyp_len=1222, ref_len=1263)`.
 
 ## TODO
 
@@ -27,10 +37,8 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 * Think about more features. Check `simple_features` for what we already have. Perhaps we need more span features. I added skip-bigram features recently: `le * noir` for the word `chien` in `le chien noir.`, and `chien * -END-` for `.`. 
 
-* Use the script - which we will be provided with soon - to compute the BLEU score of our predicted translations produced in `predict.py` compared with gold-translations provided in the folder [data](data/dev1.zh-en). (Note: we get a number of gold-standard translations - apparently BLEU then works better). We need to write some small script to do this.
+* DONE.  ~Use the script - which we will be provided with soon - to compute the BLEU score of our predicted translations produced in `predict.py` compared with gold-translations provided in the folder [data](data/dev1.zh-en). (Note: we get a number of gold-standard translations - apparently BLEU then works better). We need to write some small script to do this.~
 
 ## Some issues/questions
 
 * The problem with derivations for which the `p(y,d|x) = nan` is this: the weights vector `w`. This *still* occurs, even with the above described hack. It *only* occurs with long sentences though. I think because for a long sentence, the derivation has many edges. And then `sum([estimated_weights[edge] for edge in derrivation])` gets upset, which we use in `join_prob` to compute the  `p(y,d|x)`. NOTE: This is not *really* an isse: we still get Viterbi estimates! We just cannot compute the correct probability.
-
-* Not sure about the regularizer. Should we use: $\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] + \lambda ||w|| $ or  $\mathbb{E}[D(x,y)] - \mathbb{E}[D_n(x)] - lambda ||w||$?
