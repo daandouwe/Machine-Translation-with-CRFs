@@ -168,7 +168,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                     lmbda=2.0,
                     savepath=False,
                     prediction=False,
-                    shuffle=False):
+                    shuffle=False,
+                    prediction_lentgh=10):
     """
     Performs stochastic gradient descent on the weights vector w on
     minibatches = [minibatch_1, minibatch_2,....,minibatch_N].
@@ -306,7 +307,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             print('Learning rates: {}'.format(learning_rates))
 
         if prediction and i%5==0: # save every 5 iterations
-            predict(parses[0:200], w, i, prediction)
+            predict(parses[0:prediction_lentgh], w, i, prediction)
 
     return ws, delta_ws
 

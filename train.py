@@ -9,20 +9,12 @@ from predict import predict
 
 # savepath = '../parses/29-sents-2-translations-sparse/'
 # savepath = '../parses/eps-100/'
-<<<<<<< HEAD
 savepath = '../parses/eps-2k/'
 # predictpath =  'prediction/2k/full-3/'
 predictpath =  'prediction/2k/'
 
 parses = [load_parses_separate(savepath, k) for k in range(20)]
 
-=======
-savepath = '../parses/eps-200/'
-predictpath =  'prediction/2k/shuffle-200/'
-
-parses = [load_parses_separate(savepath, k) for k in range(3)]
-print('parses are loaded')
->>>>>>> origin/master
 lexicon = load_lexicon(savepath)
 print('lexicon is loaded')
 fset = load_featureset(savepath)
@@ -48,7 +40,7 @@ minibatches = partition(parses, k)
 w_trained, delta_ws = sgd_minibatches(iters=6, delta_0=10, w=w_init, minibatches=minibatches, batch_size=k, parses=parses, shuffle=True,
                                       sparse=True, bar=True, log=False, log_last=True,
                                       check_convergence=True, scale_weight=False, regularizer=10.0,
-                                      lmbda=1, savepath=savepath+'weights/full-3', prediction=predictpath)
+                                      lmbda=1, savepath=savepath+'weights/full-3', prediction=predictpath, prediction_length=200)
 
 # printing for verification
 print('End')
