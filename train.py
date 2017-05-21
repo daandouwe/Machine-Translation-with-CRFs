@@ -7,24 +7,13 @@ from util import save_weights, load_weights, partition
 from predict import predict
 
 
-# savepath = '../parses/29-sents-2-translations-sparse/'
-# savepath = '../parses/eps-100/'
 savepath = '../parses/eps-2k/'
-# predictpath =  'prediction/2k/full-3/'
 predictpath =  'prediction/2k/'
 
 parses = [load_parses_separate(savepath, k) for k in range(20)]
 
 lexicon = load_lexicon(savepath)
 fset = load_featureset(savepath)
-
-# print('number of features: {}\n'.format(len(fset)))
-# print('\n'.join(sorted(list(fset))))
-# print('\n')
-# for k, v in lexicon.items():
-# 	print(k,v)
-# print('\n')
-# print('corpus size: {}\n'.format(len(parses)))
 
 # initialize weights uniformly
 w_init = defaultdict(float)

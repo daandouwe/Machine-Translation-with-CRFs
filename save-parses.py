@@ -11,13 +11,13 @@ from features import featurize_edges, get_full_fset
 #### CORPUS AND TRANSLATIONS ####
 
 # get translations
-ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)
+ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)
 
 # load corpus
 corpus = read_data(max_sents=20000)
 start = 0
 # get only short sentences for ease of training
-corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15][start:]
+corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10][start:]
 
 print(len(corpus))
 # always save all the english sentences for reference (computing the BLEU)
@@ -38,7 +38,7 @@ for k, v in lexicon.items():
 
 #### SAVING ####
 
-savepath = '../parses/eps-20k/'
+savepath = '../parses/eps-20k-5trans/'
 
 fset = save_parses_separate(corpus, lexicon, savepath, ch_en, en_ch, eps=True, sparse=True, start=start)
 
