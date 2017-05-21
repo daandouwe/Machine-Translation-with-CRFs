@@ -9,7 +9,7 @@ import string
 from collections import defaultdict
 import progressbar
 
-### READ DATA ###
+### read data ###
 
 def read_data_dev(path='data/dev1.zh-en', max_sents=5):
     f = open(path, 'r')
@@ -166,7 +166,7 @@ def translations_ALT(path='data/lexicon', k=5, null=5, remove_punct=True):
 
 
 
-### LEXICON ###
+### lexicon ###
 
 def make_lexicon(ch_sent, ch_en):
     """
@@ -267,7 +267,7 @@ def parse_forests_eps(src_sent, tgt_sent, lexicon):
     return target_forest, ref_forest, src_fsa, tgt_sent
 
 
-### SAVING AND LOADING ###
+### saving and loading ###
 
 def save_parses(corpus, lexicon, savepath):
     """
