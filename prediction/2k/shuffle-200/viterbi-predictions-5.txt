@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 a in a hall the .
 could have a a this it me you .
 a no a worry one .
@@ -198,3 +199,8 @@ a a 'd like sedative .
 . a i a no like this color
 a a a to another .
 ? a nearest a in in where
+=======
+pickpocket .
+no .
+a ?
+>>>>>>> origin/master

@@ -18,6 +18,7 @@ corpus = read_data(max_sents=20000)
 
 # get only short sentences for ease of training
 corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 11]
+
 print(len(corpus))
 # always save all the english sentences for reference (computing the BLEU)
 f = open('../parses/eps-20k/reference.txt', 'w')

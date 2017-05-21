@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 . i i
 . i i
 . i i
@@ -179,3 +180,8 @@
 . i i
 , . i i
 ? i i
+=======
+. pickpocket
+. no
+? taxi
+>>>>>>> origin/master

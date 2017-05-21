@@ -9,16 +9,24 @@ from predict import predict
 
 # savepath = '../parses/29-sents-2-translations-sparse/'
 # savepath = '../parses/eps-100/'
+<<<<<<< HEAD
 savepath = '../parses/eps-2k/'
 # predictpath =  'prediction/2k/full-3/'
 predictpath =  'prediction/2k/'
 
 parses = [load_parses_separate(savepath, k) for k in range(20)]
 
+=======
+savepath = '../parses/eps-200/'
+predictpath =  'prediction/2k/shuffle-200/'
+
+parses = [load_parses_separate(savepath, k) for k in range(3)]
+print('parses are loaded')
+>>>>>>> origin/master
 lexicon = load_lexicon(savepath)
-
+print('lexicon is loaded')
 fset = load_featureset(savepath)
-
+print('feature set is loaded')
 
 # print('number of features: {}\n'.format(len(fset)))
 # print('\n'.join(sorted(list(fset))))
@@ -31,6 +39,7 @@ fset = load_featureset(savepath)
 # initialize weights uniformly
 w_init = defaultdict(float)
 for feature in fset:
+    print('passed feature')
     w_init[feature] = 1e-2
 
 
@@ -42,6 +51,7 @@ w_trained, delta_ws = sgd_minibatches(iters=6, delta_0=10, w=w_init, minibatches
                                       lmbda=1, savepath=savepath+'weights/full-3', prediction=predictpath)
 
 # printing for verification
+print('End')
 w = w_trained[-1]
 for k, v in sorted(w.items(), key=lambda x: x[1], reverse=True):
 	print('{}'.format(k).ljust(25) + '{}'.format(v))

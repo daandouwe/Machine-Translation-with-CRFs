@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 in hall i the . i
 i this it me have i could . i
 no worry i one . i
@@ -198,3 +199,8 @@ there i music ? i
 i no like this i . i color
 me i to one i one . i another
 in in i ? i
+=======
+pickpocket .
+no .
+a ?
+>>>>>>> origin/master
