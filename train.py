@@ -37,10 +37,12 @@ for feature in fset:
 
 k = 1
 minibatches = partition(parses, k)
-w_trained, delta_ws = sgd_minibatches(iters=6, delta_0=10, w=w_init, minibatches=minibatches, batch_size=k, parses=parses, shuffle=True,
-                                      sparse=True, bar=True, log=False, log_last=True,
+w_trained, delta_ws = sgd_minibatches(iters=6, delta_0=10, w=w_init, minibatches=minibatches, 
+									  batch_size=k, parses=parses, 
+									  shuffle=True, sparse=True, bar=True, log=False, log_last=True,
                                       check_convergence=True, scale_weight=False, regularizer=10.0,
-                                      lmbda=1, savepath=savepath+'weights/full-3', prediction=predictpath, prediction_length=200)
+                                      lmbda=1, savepath=savepath+'weights/full-3', 
+                                      prediction=predictpath, prediction_length=200)
 
 # printing for verification
 print('End')

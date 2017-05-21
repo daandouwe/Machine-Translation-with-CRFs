@@ -22,7 +22,6 @@ def update_w(wmap, expected_features_D_xy, expected_features_Dn_x, delta=0.1, re
     w_new = defaultdict(float)
     delta_w = 0.0 # holds the sum of deltas
 
-    # wmap_l1norm = sum(map(abs, wmap.values()))
     wmap_l2norm = np.sqrt(sum(np.square(list(wmap.values()))))
 
     for rule in chain(expected_features_D_xy, expected_features_Dn_x):
