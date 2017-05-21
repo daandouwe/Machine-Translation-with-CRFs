@@ -34,7 +34,7 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 NOTE: when you select only the short sentences you get different sizes for the corpus! 
 
-* `new!` Tim has made a parallel version of save-parses! You can now use the branch parallel to check it out for yourself. If you have 4 cores you can simply run `python save-parse.py --num-cores 8` and see the magic of parallel computing unfold in front of your eyes. Warning: expect massive speedup (5x or more) and some beautiful wind-tunnel effects from your desktop/laptop.
+`new!` Tim has made a parallel version of save-parses! You can now use the branch parallel to check it out for yourself. If you have 4 cores you can simply run `python save-parse.py --num-cores 8` and see the magic of parallel computing unfold in front of your eyes. Warning: expect massive speedup (5x or more) and some beautiful wind-tunnel effects from your desktop/laptop.
 
 ## Some notes on training
 
