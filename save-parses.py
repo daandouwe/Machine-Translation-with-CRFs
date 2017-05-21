@@ -3,12 +3,12 @@ from collections import defaultdict
 from processing import *
 from features import featurize_edges, get_full_fset
 
-# ########################################################################
-# Saving the parses of a small number given a lexicon, which we also save.
-# ########################################################################
+# ######################################################################## #
+# Saving the parses of some sentences given a lexicon, which we also save. #
+# ######################################################################## #
 
 
-#### CORPUS AND TRANSLATIONS ####
+#### corpus an translations ####
 
 # get translations
 ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)
@@ -26,7 +26,7 @@ for ch, en in corpus:
 	f.write(en + '\n')
 f.close()
 
-#### PARSES ####
+#### parses ####
 
 # make lexicons for sentences in short corpus
 lexicons = [make_lexicon(ch_sent, ch_en) for ch_sent, _ in corpus]
@@ -36,7 +36,7 @@ for k, v in lexicon.items():
 	print(k,v)
 
 
-#### SAVING ####
+#### saving ####
 
 savepath = '../parses/eps-20k-5trans/'
 

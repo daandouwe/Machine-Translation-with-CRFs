@@ -5,15 +5,6 @@ from collections import defaultdict, deque, Counter
 import numpy as np
 
 
-####
-
-# NOTE: we are working wih exp(weights)!
-
-# This causes numerical instability?
-
-####
-
-
 def top_sort(forest: CFG) -> list:
     """Returns ordered list of nodes according to topsort order in an acyclic forest"""
     S = {symbol for symbol in forest.terminals} # (Copy!) only terminals have no dependecies
@@ -128,25 +119,6 @@ def viterbi(forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Sy
     return V
 
 
-# def viterbi_log(forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Symbol) -> dict:
-#     """Returns the viterbi decoding of hypergraph"""
-#     Q = deque([root])
-#     V = list()
-#     while Q:
-#         symbol = Q.popleft()
-#         incoming = forest.get(symbol)
-#         weights = [1.0]*len(incoming)
-#         for i, edge in enumerate(incoming):
-#             weights[i] = edge_weights[edge]
-#             for u in edge.rhs: # u in tail(e)
-#                 weights[i] += inside[u] # TODO: change to log-sum-exp
-#         weight, selected = max(zip(weights, incoming), key=lambda xy: xy[0])
-#         for sym in selected.rhs:
-#             if not sym.is_terminal():
-#                 Q.append(sym)
-#         V.append(selected)    
-#     return V
-
 def viterbi_log(forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Symbol) -> dict:
     """Returns the viterbi decoding of hypergraph"""
     Q = deque([root])
@@ -189,8 +161,7 @@ def sample(num_samples: int, forest: CFG, tsort: list, edge_weights: dict, insid
                     Q.append(sym)
             S.append(selected)    
         samples.append(S)
-    # most_sampled, counts = Counter(samples).most_common(1)[0]
-    # hack since list in unhashable type
+    # hack since list is unhashable type, so we cannot use Counter (bummer)
     ys = [write_derrivation(d).pop() for d in samples] 
     most_y, counts = Counter(ys).most_common(1)[0]
     dic = {y: d for y, d in zip(ys, samples)}

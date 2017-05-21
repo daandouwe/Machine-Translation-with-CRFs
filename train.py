@@ -20,7 +20,6 @@ w_init = defaultdict(float)
 for feature in fset:
     w_init[feature] = 1e-2
 
-
 k = 1
 minibatches = partition(parses, k)
 w_trained, delta_ws = sgd_minibatches(iters=6, delta_0=10, w=w_init, minibatches=minibatches, 
