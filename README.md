@@ -17,9 +17,19 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 Let's train with *three types of parses*:
 
-* `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)
+* `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=20000)`
 `corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`
+
+
+* `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)`
+`corpus = read_data(max_sents=20000)`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`
+
+
+* `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
+`corpus = read_data(max_sents=20000)`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15]`
 
 ## Some notes on training
 
