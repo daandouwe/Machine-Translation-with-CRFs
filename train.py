@@ -9,15 +9,15 @@ from predict import predict
 
 # savepath = '../parses/29-sents-2-translations-sparse/'
 # savepath = '../parses/eps-100/'
-savepath = '../parses/eps-2k/'
+savepath = '../parses/eps-200/'
 predictpath =  'prediction/2k/shuffle-200/'
 
-parses = [load_parses_separate(savepath, k) for k in range(200)]
-
+parses = [load_parses_separate(savepath, k) for k in range(3)]
+print('parses are loaded')
 lexicon = load_lexicon(savepath)
-
+print('lexicon is loaded')
 fset = load_featureset(savepath)
-
+print('feature set is loaded')
 
 # print('number of features: {}\n'.format(len(fset)))
 # print('\n'.join(sorted(list(fset))))
@@ -30,10 +30,11 @@ fset = load_featureset(savepath)
 # initialize weights uniformly
 w_init = defaultdict(float)
 for feature in fset:
+    print('passed feature')
     w_init[feature] = 1e-2
 
 
-k = 50
+k = 5
 minibatches = partition(parses, k)
 w_trained, delta_ws = sgd_minibatches(30, 5, w_init, minibatches=minibatches, batch_size=k, parses=parses, shuffle=True,
                                       sparse=True, bar=True, log=False, log_last=True,
@@ -41,6 +42,7 @@ w_trained, delta_ws = sgd_minibatches(30, 5, w_init, minibatches=minibatches, ba
                                       lmbda=20, savepath=savepath, prediction=predictpath)
 
 # printing for verification
+print('End')
 w = w_trained[-1]
 for k, v in sorted(w.items(), key=lambda x: x[1], reverse=True):
 	print('{}'.format(k).ljust(25) + '{}'.format(v))

@@ -17,7 +17,7 @@ ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct
 corpus = read_data(max_sents=200)
 
 # get only short sentences for ease of training
-corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]
+corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 3]
 print(len(corpus))
 # always save all the english sentences for reference (computing the BLEU)
 f = open('../parses/eps-200/reference.txt', 'w')
