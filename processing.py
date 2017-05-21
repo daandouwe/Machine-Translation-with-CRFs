@@ -8,6 +8,8 @@ from math import nan
 import string
 from collections import defaultdict
 import progressbar
+from multiprocessing import Pool
+import sys
 
 ### READ DATA ###
 
@@ -39,7 +41,7 @@ def read_data(path='data/training.zh-en', max_sents=5):
 
 def translations(path='data/lexicon', k=5, null=5, remove_punct=True):
     f = open(path, 'r')
-    
+
     ch_en_ = defaultdict(lambda: defaultdict(float))
     en_ch_ = defaultdict(lambda: defaultdict(float))
 
@@ -47,13 +49,13 @@ def translations(path='data/lexicon', k=5, null=5, remove_punct=True):
         ch, en, p_en_given_ch, p_ch_given_en = line.split()
         # for use in the parsing we replace <NULL> with -EPS-
         if ch == '<NULL>':
-            ch = '-EPS-' 
+            ch = '-EPS-'
         if en == '<NULL>':
-            en = '-EPS-' 
+            en = '-EPS-'
         ch_en_[ch][en] = float(p_en_given_ch) if not p_en_given_ch == 'NA' else 1e-10
         en_ch_[en][ch] = float(p_ch_given_en) if not p_ch_given_en == 'NA' else 1e-10
     f.close()
-    
+
     ch_punct = list("[+\.\!\/_,$%^*(+\"\']+|[+——！，。？? 、~@#￥%……&*（）：；《）《》“”()»〔〕-]+")
 
     ch_en = defaultdict(lambda: defaultdict(float))
@@ -89,7 +91,7 @@ def translations(path='data/lexicon', k=5, null=5, remove_punct=True):
             en_ch['-EPS-'] = {ch: p for ch, p in srtd[-null:]}
         else:
             en_ch[en] = {ch: p for ch, p in srtd[-k:]}
-            
+
     full_en_ch = en_ch_
     full_ch_en = ch_en_
     return ch_en, en_ch, full_en_ch, full_ch_en
@@ -99,14 +101,14 @@ def translations_ALT(path='data/lexicon', k=5, null=5, remove_punct=True):
 
     """
     Other format:
-    
+
     ch_en_[ch][en] = p(ch|en) + p(en|ch)
         or
     ch_en_[ch][en] = p(ch|en) * p(en|ch)
     """
 
     f = open(path, 'r')
-    
+
     ch_en_ = defaultdict(lambda: defaultdict(float))
     en_ch_ = defaultdict(lambda: defaultdict(float))
 
@@ -114,16 +116,16 @@ def translations_ALT(path='data/lexicon', k=5, null=5, remove_punct=True):
         ch, en, p_en_given_ch, p_ch_given_en = line.split()
         # for use in the parsing we replace <NULL> with -EPS-
         if ch == '<NULL>':
-            ch = '-EPS-' 
+            ch = '-EPS-'
         if en == '<NULL>':
-            en = '-EPS-' 
+            en = '-EPS-'
         if p_en_given_ch == 'NA':
             p_en_given_ch = 1e-10
         if p_ch_given_en == 'NA':
             p_ch_given_en = 1e-10
         ch_en_[ch][en] = float(p_en_given_ch) + float(p_ch_given_en)
     f.close()
-    
+
     ch_punct = list("[+\.\!\/_,$%^*(+\"\']+|[+——！，。？? 、~@#￥%……&*（）：；《）《》“”()»〔〕-]+")
 
     ch_en = defaultdict(lambda: defaultdict(float))
@@ -159,7 +161,7 @@ def translations_ALT(path='data/lexicon', k=5, null=5, remove_punct=True):
             en_ch['-EPS-'] = {ch: p for ch, p in srtd[-null:]}
         else:
             en_ch[en] = {ch: p for ch, p in srtd[-k:]}
-            
+
     full_en_ch = en_ch_
     full_ch_en = ch_en_
     return ch_en, en_ch, full_en_ch, full_ch_en
@@ -217,24 +219,24 @@ def parse_forests(src_sent, tgt_sent, lexicon):
     """
     src_fsa = libitg.make_fsa(src_sent)
     src_cfg = libitg.make_source_side_itg(lexicon)
-    forest = earley(src_cfg, src_fsa, 
-                    start_symbol=Nonterminal('S'), 
+    forest = earley(src_cfg, src_fsa,
+                    start_symbol=Nonterminal('S'),
                     sprime_symbol=Nonterminal("D(x)"),
                     clean=True)
-    
+
     projected_forest = libitg.make_target_side_itg(forest, lexicon)
-    
+
     tgt_fsa = libitg.make_fsa(tgt_sent)
-    ref_forest = earley(projected_forest, tgt_fsa, 
-                        start_symbol=Nonterminal("D(x)"), 
+    ref_forest = earley(projected_forest, tgt_fsa,
+                        start_symbol=Nonterminal("D(x)"),
                         sprime_symbol=Nonterminal('D(x,y)'),
                         eps_symbol=Nonterminal('-EPS-'))
-    
+
     length_fsa = libitg.LengthConstraint(len(src_sent.split()), strict=False)
-    target_forest = earley(projected_forest, length_fsa, 
-                           start_symbol=Nonterminal("D(x)"), 
+    target_forest = earley(projected_forest, length_fsa,
+                           start_symbol=Nonterminal("D(x)"),
                            sprime_symbol=Nonterminal("D_n(x)"))
-    
+
     return target_forest, ref_forest, src_fsa
 
 def parse_forests_eps(src_sent, tgt_sent, lexicon):
@@ -244,26 +246,26 @@ def parse_forests_eps(src_sent, tgt_sent, lexicon):
     """
     src_fsa = libitg.make_fsa(src_sent)
     src_cfg = libitg.make_source_side_itg(lexicon)
-    _Dx = earley(src_cfg, src_fsa, 
-                 start_symbol=Nonterminal('S'), 
+    _Dx = earley(src_cfg, src_fsa,
+                 start_symbol=Nonterminal('S'),
                  sprime_symbol=Nonterminal("D(x)"),
                  clean=True)
-    
+
     eps_count_fsa = libitg.InsertionConstraint(3)
 
-    _Dix = earley(_Dx, eps_count_fsa, 
-                  start_symbol=Nonterminal('D(x)'), 
-                  sprime_symbol=Nonterminal('D_n(x)'), 
+    _Dix = earley(_Dx, eps_count_fsa,
+                  start_symbol=Nonterminal('D(x)'),
+                  sprime_symbol=Nonterminal('D_n(x)'),
                   eps_symbol=None)
 
     target_forest = libitg.make_target_side_itg(_Dix, lexicon)
 
     tgt_fsa = libitg.make_fsa(tgt_sent)
 
-    ref_forest = earley(target_forest, tgt_fsa, 
-                        start_symbol=Nonterminal("D_n(x)"), 
+    ref_forest = earley(target_forest, tgt_fsa,
+                        start_symbol=Nonterminal("D_n(x)"),
                         sprime_symbol=Nonterminal('D(x,y)'))
-    
+
     return target_forest, ref_forest, src_fsa, tgt_sent
 
 
@@ -274,54 +276,108 @@ def save_parses(corpus, lexicon, savepath):
     Parses all sentences in corpus and saves a triple of needed ones in (huge) dictionary
     indexed by sentence number in corpus as pkl object at savepath.
 
-    :corpus: a list of tuples [(chinese sentence, english sentence)] 
+    :corpus: a list of tuples [(chinese sentence, english sentence)]
     :param lexicon: a lexicon holding translations for each word in the corpus
-    :saves: parse_dict: sentence number -> (target_forest, ref_forest, scr_fsa)   
+    :saves: parse_dict: sentence number -> (target_forest, ref_forest, scr_fsa)
     """
-    parse_dict = dict() 
+    parse_dict = dict()
     for i, (ch_sent, en_sent) in enumerate(corpus):
-        parses = parse_forests(ch_sent, en_sent, lexicon)        
-        parse_dict[i] = parses 
+        parses = parse_forests(ch_sent, en_sent, lexicon)
+        parse_dict[i] = parses
     f = open(savepath + 'parse-dict.pkl', 'wb')
     pickle.dump(parse_dict, f, protocol=4)
     f.close()
 
+src_tgt = None
+tgt_src = None
 
-def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, sparse=True, start=0):
+def init_worker():
+    global src_tgt, tgt_src
+
+    src_tgt, tgt_src, _, _ = translations(path='data/lexicon', k=4, null=3, remove_punct=True)
+
+def save_parses_separate_loop(k, pair, lexicon, savepath, eps, sparse):
+    global src_tgt, tgt_src
+
+    src_sent, tgt_sent = pair
+
+    if eps:
+        parses = parse_forests_eps(src_sent, tgt_sent, lexicon)
+    else:
+        parses = parse_forests(src_sent, tgt_sent, lexicon)
+
+    f = open(savepath + 'parses-{}.pkl'.format(k), 'wb')
+    pickle.dump(parses, f, protocol=4)
+    f.close()
+
+    # update fset
+    tgt_forest, ref_forest, src_fsa, tgt_sent = parses
+    _, fset1 = featurize_edges(ref_forest, src_fsa,
+                               sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+    _, fset2 = featurize_edges(tgt_forest, src_fsa,
+                               sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+    # fset.update(fset1 | fset2)
+    #
+    return fset1 | fset2
+
+def save_parses_separate(corpus, lexicon, savepath, src_tgt, tgt_src, eps=True, sparse=True):
     """
-    For each sentence k in corpus we parse and save the triple of needed parses 
+    For each sentence k in corpus we parse and save the triple of needed parses
     as pkl object at savepath/parses-k.pkl.
 
-    :corpus: a list of tuples [(chinese sentence, english sentence)] 
+    :corpus: a list of tuples [(chinese sentence, english sentence)]
     :param lexicon: a lexicon holding translations for each word in the corpus
     :saves: parses-k = (target_forest, ref_forest, scr_fsa, tgt_sent) for each k in 0,..,len(corpus)
     :returns fset: all features used in both the forests
     """
-    fset = set()
     print('Parsing...')
     bar = progressbar.ProgressBar(max_value=len(corpus))
 
-    for k, (src_sent, tgt_sent) in enumerate(corpus):
+    fset = set()
+
+    cores = 0
+
+    for i in range(len(sys.argv)):
+        if sys.argv[i] == '--num-cores':
+            assert(i + 1 < len(sys.argv))
+            cores = int(sys.argv[i + 1])
+
+    if cores == 0:
+        print('[!] Missing number of cores. Run `python3 save-parses.py --num-cores [x]`.')
+        exit(1)
+
+    p = Pool(cores, initializer = init_worker)
+    # fset = set(p.map(save_parses_separate_loop, enumerate(corpus)))
+    tasks = []
+    for k, pair in enumerate(corpus):
+        tasks.append(p.apply_async(save_parses_separate_loop,
+                                   args = [ k, pair, lexicon, savepath,
+                                            eps, sparse ]))
+
+    for k, task in enumerate(tasks):
+        fset.update(task.get())
+
         bar.update(k)
-        if eps:
-            parses = parse_forests_eps(src_sent, tgt_sent, lexicon)
-        else:
-            parses = parse_forests(src_sent, tgt_sent, lexicon)
-        f = open(savepath + 'parses-{}.pkl'.format(k+start), 'wb')
-        pickle.dump(parses, f, protocol=4)
-        f.close()
-
-        # update fset
-        tgt_forest, ref_forest, src_fsa, tgt_sent = parses
-        _, fset1 = featurize_edges(ref_forest, src_fsa, 
-                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
-        _, fset2 = featurize_edges(tgt_forest, src_fsa, 
-                                   sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
-        fset.update(fset1 | fset2)
-        
-        bar.update(k+1)
-
-    bar.finish()
+    #     bar.update(k)
+    #     if eps:
+    #         parses = parse_forests_eps(src_sent, tgt_sent, lexicon)
+    #     else:
+    #         parses = parse_forests(src_sent, tgt_sent, lexicon)
+    #     f = open(savepath + 'parses-{}.pkl'.format(k), 'wb')
+    #     pickle.dump(parses, f, protocol=4)
+    #     f.close()
+    #
+    #     # update fset
+    #     tgt_forest, ref_forest, src_fsa, tgt_sent = parses
+    #     _, fset1 = featurize_edges(ref_forest, src_fsa,
+    #                                sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+    #     _, fset2 = featurize_edges(tgt_forest, src_fsa,
+    #                                sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse, src_tgt=src_tgt, tgt_src=tgt_src)
+    #     fset.update(fset1 | fset2)
+    #
+    #     bar.update(k+1)
+    #
+    # bar.finish()
     return fset
 
 
@@ -369,5 +425,3 @@ def load_featureset(savepath):
     fset = pickle.load(f)
     f.close()
     return fset
-
-

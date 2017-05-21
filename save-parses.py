@@ -11,13 +11,17 @@ from features import featurize_edges, get_full_fset
 #### CORPUS AND TRANSLATIONS ####
 
 # get translations
-ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)
+"""
+TODO: when we initialize parallel workers to save the parses, we need to load the translations for each worker individually. Make sure to set `k` and `null` in `init_worker` in processing.py.
+"""
+
+ch_en, en_ch, _, _ = translations(path='data/lexicon', k=4, null=3, remove_punct=True)
 
 # load corpus
 corpus = read_data(max_sents=20000)
-start = 0
+
 # get only short sentences for ease of training
-corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10][start:]
+corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15]
 
 print(len(corpus))
 # always save all the english sentences for reference (computing the BLEU)
@@ -38,9 +42,9 @@ for k, v in lexicon.items():
 
 #### SAVING ####
 
-savepath = '../parses/eps-20k-5trans/'
+savepath = '../parses/eps-20k/'
 
-fset = save_parses_separate(corpus, lexicon, savepath, ch_en, en_ch, eps=True, sparse=True, start=start)
+fset = save_parses_separate(corpus, lexicon, savepath, ch_en, en_ch, eps=True, sparse=True)
 
 save_lexicon(lexicon, savepath)
 
