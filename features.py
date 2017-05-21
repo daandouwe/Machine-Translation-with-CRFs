@@ -199,21 +199,7 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
     return fmap, fset
 
 
-'''
-To make sure the feature function is aware that now we will have a single span per symbol when dealing
-with $D(x)$ and a pair of spans when dealing with $D(x,y)$.
-Also, the feature function can now capitalise on the new types of rules
-(for example to count number of translations, insertions and deletions in each edge).
 
-We want from this notation:
-[X]:1-2:0-3 ||| [X]:2-2:0-1 [X]:1-2:1-3
-
-to this notation:
-[X]:3-4 ||| [I]:3-3 [T]:3-4
-
-But only when dealing with Dx, not Dxy (-> then still pair-spans)
-
-'''
 
 
 def simple_features_finite(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
@@ -227,7 +213,21 @@ def simple_features_finite(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
         * TODO: target sentence length n
         * TODO: extract IBM1 dense features
     crucially, note that the target sentence y is not available!
-    """
+	
+	To make sure the feature function is aware that now we will have a single span per symbol when dealing
+	with $D(x)$ and a pair of spans when dealing with $D(x,y)$.
+	Also, the feature function can now capitalise on the new types of rules
+	(for example to count number of translations, insertions and deletions in each edge).
+
+	We want from this notation:
+	[X]:1-2:0-3 ||| [X]:2-2:0-1 [X]:1-2:1-3
+
+	to this notation:
+	[X]:3-4 ||| [I]:3-3 [T]:3-4
+
+	But only when dealing with Dx, not Dxy (-> then still pair-spans)
+
+	"""
     fmap = defaultdict(float)
     fset = set()  # stores the features we've added
     if len(edge.rhs) == 2:  # binary rule
