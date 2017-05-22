@@ -21,17 +21,17 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=40000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`. [Link to training parses](). [Link to dev parses](). `TODO!`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`. [Link to training parses](). [Link to dev parses](). `TODO`
  
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)`
 `corpus = read_data(max_sents=40000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10].` [Link to training parses](). [Link to dev parses](). `TODO!`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10].` [Link to training parses](). [Link to dev parses](). `TODO`
 
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=20000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15].`  [Link to training parses](). [Link to dev parses](). `TODO!`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15].`  [Link to training parses](). [Link to dev parses](). `TODO`
 
 `note:` when you select the sentences of a certain length you get a smaller number than 40k! The first example with `<10` gives 28372 parses, but when you put `<15` you will catch more sentences. To make sure that in the final training we can compare the runs for the three different parse-types fairly let's  **only use the parses 0-28k**.
 
@@ -50,6 +50,15 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
  
 * Shuffling is still ok, but as noted above, multiple iterations do not accomplish much, and so shuffle has not much of a function. [Using `shuffle=True` we reshuffle the parses and partition these into new minibatches at each iteration. This drastically improves 'movement' of predicted translation sentences over iterations. Compare the sentences in [shuffle](prediction/2k/shuffle) to those in [no-shuffle](prediction/2k/no-shuffle) and see the difference: the the `no-shuffle` sentences are almost stationary after the first iteration except for some insertions and deletions of 'the'; the `shuffle` sentences on the other continue to change drastically each iteration. I think our best shot is with `shuffle` for this reason: we just need to take this 'movement' behaviour into account (see note below).]
 
+## Training schedule
+
+* I'm at this moment (Monday 12:42) training on `eps-40k-ml10-3trans` and `eps-40k-ml10-5trans` with [these](prediction/eps-40k-ml10-3trans/Screen Shot 2017-05-22 at 12.13.05) resp. [these](prediction/eps-40k-ml10-5trans/Screen Shot 2017-05-22 at 12.13.27) settings. This will take approximately 12 hours.
+
+* `TODO` I would propose to use the same settings to train on `eps-40k-ml15-3trans`.
+
+* If you want to train on any of the three parses with different settings, please do!
+
+ 
 ## Some results
 
 See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our best result so far! This has been achieved by training 1 iteration over 1300 sentences of maximal length 9 parsed with `eps=True` and maximally 3 epsilon insertions, with minibatch size 1, `delta_0=10`, `lmbda=0.01`, `scale_weight=2` and `regularizer=False`. See the [correct translations](prediction/2k/full/reference.txt) for reference. (Also note that later iterations get worse which you can see [here](prediction/2k/full/viterbi-predictions-1.txt).) Lastly: we achieve a BLEU score of 3.44 on these translations (hurray!): `BLEU = 3.44, 49.8/6.2/1.1/0.5 (BP=0.967, ratio=0.968, hyp_len=1222, ref_len=1263)`.
