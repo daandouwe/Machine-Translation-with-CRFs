@@ -60,8 +60,6 @@ See [these translations](prediction/2k/full/viterbi-predictions-0.txt) for our b
 
 * Think about more features. Check `simple_features` for what we already have. Perhaps we need more span features. I added skip-bigram features recently: `le * noir` for the word `chien` in `le chien noir.`, and `chien * -END-` for `.`. 
 
-* DONE.  ~Use the script - which we will be provided with soon - to compute the BLEU score of our predicted translations produced in `predict.py` compared with gold-translations provided in the folder [data](data/dev1.zh-en). (Note: we get a number of gold-standard translations - apparently BLEU then works better). We need to write some small script to do this.~
-
 ## Some issues/questions
 
 * The problem with derivations for which the `p(y,d|x) = nan` is this: the weights vector `w`. This *still* occurs, even with the above described hack. It *only* occurs with long sentences though. I think because for a long sentence, the derivation has many edges. And then `sum([estimated_weights[edge] for edge in derrivation])` gets upset, which we use in `join_prob` to compute the  `p(y,d|x)`. NOTE: This is not *really* an issue: we still get Viterbi estimates! We just cannot compute the correct probability.
