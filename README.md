@@ -21,15 +21,15 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=40000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`. [Link parses]() 
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`. [Link to parses]() 
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)`
 `corpus = read_data(max_sents=40000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10].` [Link parses]()
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10].` [Link to parses]()
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=20000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15].`  [Link parses]()
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15].`  [Link to parses]()
 
 NOTE: when you select the sentences of a certain length you get a smaller number than 40k! The first example of `<10` gives 28372 parses, but when you put `<15` you will catch more sentences. To make sure that in the final training we can compare the runs for the three different parse-types fairly let's  **only use the parses 0-28k**.
 
