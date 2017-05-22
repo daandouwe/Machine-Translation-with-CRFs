@@ -52,7 +52,7 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 ## Training schedule
 
-* I'm at this moment (Monday 12:42) training on `eps-40k-ml10-3trans` and `eps-40k-ml10-5trans` with [these](prediction/eps-40k-ml10-3trans/screenshot) resp. [these](prediction/eps-40k-ml10-5trans/screenshot) settings. This will take approximately 12 hours.
+* I'm at this moment (Monday 12:42) training on `eps-40k-ml10-3trans` and `eps-40k-ml10-5trans` with [these](prediction/eps-40k-ml10-3trans/screenshot.png) resp. [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings. This will take approximately 12 hours.
 
 * `TODO` I would propose to use the same settings to train on `eps-40k-ml15-3trans`.
 
