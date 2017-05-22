@@ -92,7 +92,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                 
                 ### D_n(x) ###
 
-                tgt_edge2fmap, _ = featurize_edges(target_forest, src_fsa,
+                tgt_edge2fmap, _ = featurize_edges(target_forest, src_fsa, tgt_sent=tgt_sent,
                                                    sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse)
 
                 # recompute edge weights
@@ -107,7 +107,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
 
                 ### D(x,y) ###
 
-                ref_edge2fmap, _ = featurize_edges(ref_forest, src_fsa,
+                ref_edge2fmap, _ = featurize_edges(ref_forest, src_fsa, tgt_sent=tgt_sent,
                                                    sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse)
                 # recompute edge weights
                 ref_edge_weights = {edge: np.exp(weight_function(edge, ref_edge2fmap[edge], w)) for edge in ref_forest}

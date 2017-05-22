@@ -56,7 +56,7 @@ def get_unispans(symbol: Span):
     return (start, end)
 
 
-def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
+def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'), tgt_sent='',
                     sparse_del=False, sparse_ins=False, sparse_trans=False,
                     src_tgt=defaultdict(lambda: defaultdict(float)),
                     tgt_src=defaultdict(lambda: defaultdict(float))) -> dict:
@@ -195,10 +195,11 @@ def simple_features(edge: Rule, src_fsa: FSA, eps=Terminal('-EPS-'),
         # finally add source sentence length
         fmap['scr-sent:length:{}'.format(src_fsa.nb_states())] += 1.0
         fset.add('scr-sent:length:{}'.format(src_fsa.nb_states()))
+        # and target sentence length
+        fmap['tgt-sent:length:{}'.format(len(tgt_sent.split()))] += 1.0
+        fset.add('tgt-sent:length:{}'.format(len(tgt_sent.split())))
 
     return fmap, fset
-
-
 
 
 
@@ -378,7 +379,7 @@ def get_full_fset(parses, src_tgt, tgt_src, sparse=False):
     return fset
 
 
-def featurize_edges(forest, src_fsa,
+def featurize_edges(forest, src_fsa, tgt_sent='',
                     sparse_del=False, sparse_ins=False, sparse_trans=False,
                     finite=False,
                     src_tgt=defaultdict(lambda: defaultdict(float)),
@@ -390,7 +391,7 @@ def featurize_edges(forest, src_fsa,
         if finite:
             edge2fmap[edge], fset = simple_features_finite(edge, src_fsa, eps, sparse_del, sparse_ins, sparse_trans)
         else:
-            edge2fmap[edge], fset = simple_features(edge, src_fsa, eps, sparse_del, sparse_ins, sparse_trans)
+            edge2fmap[edge], fset = simple_features(edge, src_fsa, eps, sparse_del, sparse_ins, sparse_trans, tgt_sent='')
         fset_accum.update(fset)
     return edge2fmap, fset_accum
 
