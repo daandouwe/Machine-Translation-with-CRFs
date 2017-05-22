@@ -7,10 +7,10 @@ from util import save_weights, load_weights, partition
 from predict import predict
 
 
-savepath = '../parses/eps-40k-5trans/'
-predictpath =  'prediction/eps-40k-5trans/'
+savepath = '../parses/eps-40k-ml10-5trans/'
+predictpath =  'prediction/eps-40k-ml10-5trans/'
 
-parses = [load_parses_separate(savepath, k) for k in range(1300)]
+parses = [load_parses_separate(savepath, k) for k in range(28000)]
 
 lexicon = load_lexicon(savepath)
 fset = load_featureset(savepath)
@@ -22,12 +22,10 @@ for feature in fset:
 
 k = 1
 minibatches = partition(parses, k)
-w_trained, delta_ws = sgd_minibatches(iters=1, delta_0=100, w=w_init, minibatches=minibatches, 
-									  batch_size=k, parses=parses, 
-									  shuffle=True, sparse=True, bar=True, log=False, log_last=False,
-                                      check_convergence=True, scale_weight=2, regularizer=0,
-                                      lmbda=0.01, savepath=savepath, 
-                                      prediction=predictpath, prediction_length=200)
+w_trained, delta_ws = sgd_minibatches(iters=1, delta_0=100, w=w_init, minibatches=minibatches, batch_size=k, parses=parses, 
+									  shuffle=True, sparse=True, scale_weight=2, regularizer=0, lmbda=0.001,
+									  bar=True, log=False, log_last=False, check_convergence=False, 
+									  savepath=savepath, prediction=predictpath, prediction_length=200)
 
 # printing for verification
 w = w_trained[-1]
