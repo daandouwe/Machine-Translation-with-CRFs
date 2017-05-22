@@ -1,1 +1,1 @@
-perl multi-bleu.pl '../parses/eps-2k/reference.txt'  < 'prediction/2k/full/viterbi-predictions-0.txt' 
+perl multi-bleu.pl '../parses/eps-40k/reference.txt'  < 'prediction/40k-5trans/viterbi-predictions-1.txt' 

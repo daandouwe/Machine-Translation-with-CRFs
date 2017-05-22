@@ -4,18 +4,6 @@ from graph import *
 from features import weight_function
 import progressbar
 
-loadpath = 'data/dev1.zh-en'
-savepath = 'prediction/2k/full/'
-weightpath = '../parses/eps-2k/weights/full/trained-10-'
-
-
-# Parsepath should be set to the path of the parses of the chinese development sentences in dev1.zh-en, generated
-# in the same way as the training sentences. Note: we no longer need the development sentence lenghts
-# from the folder dev123_lengths! We are using the epsilon constraint now.
-
-# parsepath = '../parses/eps-100/'
-parsepath = '../parses/eps-200/'
-
 def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 	
 	if scale_weights:
@@ -90,9 +78,14 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 
 if __name__ == "__main__":
 
+	loadpath = 'data/dev1.zh-en'
+	savepath = 'prediction/40k-5trans/'
+	weightpath = '../parses/eps-40k-5trans/trained-1-'
+	parsepath = '../parses/eps-40k-5trans/'
+
 	w = load_weights(weightpath)
 	parses = [load_parses_separate(parsepath, k) for k in range(200)]
-	predict(parses, w, k=10, savepath='prediction/2k/full/', scale_weights=False)
+	predict(parses, w, k=1, savepath=savepath, scale_weights=False)
 
 
 		

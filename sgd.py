@@ -49,7 +49,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                     savepath=False,
                     prediction=False,
                     shuffle=False,
-                    prediction_lentgh=10):
+                    prediction_length=10):
     """
     Performs stochastic gradient descent on the weights vector w on
     minibatches = [minibatch_1, minibatch_2,....,minibatch_N].
@@ -76,7 +76,6 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             minibatches = partition(random.sample(parses, len(parses)), batch_size)
 
         for k, minibatch in enumerate(minibatches):
-            print('OK')
             delta_w = 0.0
             w_new = defaultdict(float)
             
@@ -87,11 +86,9 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             if bar and not (i==iters-1 and log_last): bar.update(k)
 
             for l, parse in enumerate(minibatch):
-                print('okido')
                 # unpack parse
 
                 target_forest, ref_forest, src_fsa, tgt_sent = parse
-                print(target_forest)
                 
                 ### D_n(x) ###
 
@@ -100,15 +97,11 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
 
                 # recompute edge weights
                 tgt_edge_weights = {edge: np.exp(weight_function(edge, tgt_edge2fmap[edge], w)) for edge in target_forest}
-                print('computing inside and outside')
                 # compute inside and outside
                 tgt_tsort = top_sort(target_forest)
-                print('target sorted')
                 root_tgt = Nonterminal("D_n(x)")
                 I_tgt = inside_algorithm(target_forest, tgt_tsort, tgt_edge_weights)
-                print('target inside done')
                 O_tgt = outside_algorithm(target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt)
-                print('target outside done')
                 # compute expected features
                 expected_features_Dn_x = expected_feature_vector(target_forest, I_tgt, O_tgt, tgt_edge2fmap)
 
@@ -116,7 +109,6 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
 
                 ref_edge2fmap, _ = featurize_edges(ref_forest, src_fsa,
                                                    sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse)
-                print('recomputing edge weights')
                 # recompute edge weights
                 ref_edge_weights = {edge: np.exp(weight_function(edge, ref_edge2fmap[edge], w)) for edge in ref_forest}
 
@@ -125,10 +117,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                 root_ref = Nonterminal("D(x,y)")
                 I_ref = inside_algorithm(ref_forest, tsort, ref_edge_weights)
                 O_ref = outside_algorithm(ref_forest, tsort, ref_edge_weights, I_ref, root_ref)
-                print('calculating expected features')
                 # compute expected features
                 expected_features_D_xy = expected_feature_vector(ref_forest, I_ref, O_ref, ref_edge2fmap)
-                print('expected_features calculated: ', expected_features_D_xy)
                 # update w
                 w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta_k, regularizer=regularizer)
                 
@@ -182,6 +172,6 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             print('Learning rates: {}'.format(learning_rates))
 
         if prediction and i%5==0: # save every 5 iterations
-            predict(parses[0:prediction_lentgh], w, i, prediction)
+            predict(parses[0:prediction_length], w, i, prediction)
 
     return ws, delta_ws
