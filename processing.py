@@ -13,16 +13,15 @@ import progressbar
 
 def read_data_dev(path='data/dev1.zh-en', max_sents=5):
     f = open(path, 'r')
-    corpus = dict()
+    corpus = list()
     for k, line in enumerate(f):
         if k + 1 > max_sents:
             break
         sents = line[:-1].split('|||')
         ch = sents[0]
-        translations = list()
-        for en in sents[1:]:
-            translations.append(en)
-        corpus[ch] = translations
+        en = '|||'.join(sents[1:])
+        corpus.append((ch, en))
+        print(en)
     return corpus
 
 

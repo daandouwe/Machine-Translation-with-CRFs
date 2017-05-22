@@ -78,14 +78,13 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 
 if __name__ == "__main__":
 
-	loadpath = 'data/dev1.zh-en'
-	savepath = 'prediction/40k-5trans/'
-	weightpath = '../parses/eps-40k-5trans/trained-1-'
-	parsepath = '../parses/eps-40k-5trans/'
+	savepath = 'prediction/dev/ml10-3trans/'
+	weightpath = '../parses/eps-40k-ml10-3trans/trained-1-'
+	parsepath = '../parses/dev/ml10-3trans/'
 
 	w = load_weights(weightpath)
-	parses = [load_parses_separate(parsepath, k) for k in range(200)]
-	predict(parses, w, k=1, savepath=savepath, scale_weights=False)
+	parses = [load_parses_separate(parsepath, k) for k in range(10)]
+	predict(parses, w, k=1, savepath=savepath, scale_weights=10)
 
 
 		

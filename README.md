@@ -21,12 +21,11 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=40000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`. [Link to training parses](https://www.dropbox.com/sh/454l7wo4s69nnls/AADz2kWop6nzbsR04-TUih7ja?dl=0&lst=&preview=eps-40k-ml10-3trans.zip). [Link to dev parses](). `TODO`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10]`. [Link to training parses](https://www.dropbox.com/sh/454l7wo4s69nnls/AADz2kWop6nzbsR04-TUih7ja?dl=0&lst=&preview=eps-40k-ml10-3trans.zip). [Link to dev parses](). `done`
  
-
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=5, null=5, remove_punct=True)`
 `corpus = read_data(max_sents=40000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10].` [Link to training parses](https://www.dropbox.com/sh/454l7wo4s69nnls/AADz2kWop6nzbsR04-TUih7ja?dl=0&lst=&preview=eps-40k-ml10-5trans.zip). [Link to dev parses](). `TODO`
+`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10].` [Link to training parses](https://www.dropbox.com/sh/454l7wo4s69nnls/AADz2kWop6nzbsR04-TUih7ja?dl=0&lst=&preview=eps-40k-ml10-5trans.zip). [Link to dev parses](). `done`
 
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
