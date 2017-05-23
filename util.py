@@ -52,6 +52,11 @@ def load_weights_log(savepath):
     f.close()
     return weights
 
+def save_likelihoods(likelihoods, savepath):
+    f = open(savepath + 'likelihoods.pkl', 'wb')
+    pickle.dump(likelihoods, f, protocol=4)
+    f.close()
+
 def partition(l, n):
     return [l[i:i + n] for i in range(0, len(list(l)), n)]
 

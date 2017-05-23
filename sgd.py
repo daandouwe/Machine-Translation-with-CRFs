@@ -62,7 +62,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
     where k is the index of the minibatch and delta_0 is the initial learning rate,
     and lmbda is another hyperparameter that controls the rate of decay.
     """ 
-
+    likelihoods = list()
+    avg_likelihoods = list()
     ws = []
     delta_ws = []
     for i in range(iters):
@@ -121,11 +122,17 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                 expected_features_D_xy = expected_feature_vector(ref_forest, I_ref, O_ref, ref_edge2fmap)
                 # update w
                 w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta_k, regularizer=regularizer)
-                
-                # print('\n')
-                # for k in sorted(w_step.keys()):
-                #     print('{}'.format(k).ljust(25) + '{}'.format(w_step[k]))
-                # print('\n')
+
+                # save likelihoods
+                if I_ref and I_tgt: # for the case of an empty forest! since log(0) = -inf
+                    # compute the likelihood of the target sentence
+                    if not I_ref[root_ref]==0 and not I_tgt[root_tgt] == 0:
+                        l = np.log(I_ref[root_ref]) - np.log(I_tgt[root_tgt])
+                        likelihoods.append(l)
+                        likelihood = sum(likelihoods) / len(likelihoods)
+                        avg_likelihoods.append(likelihood)
+                else:
+                    pass
 
                 # the update is averaged over the minibatch
                 delta_w += d_w / len(minibatch)
@@ -154,6 +161,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             # hack: scale weights so that they are at most of the scale 10**scale_weight
             if scale_weight:
                 abs_max = max(map(abs, w_new.values()))
+                if not np.isfinite(abs_max):
+                    print('alarm')
                 for k, v in w_new.items():
                     w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
 
@@ -174,4 +183,4 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
         if prediction and i%5==0: # save every 5 iterations
             predict(parses[0:prediction_length], w, i+1, prediction)
 
-    return ws, delta_ws
+    return ws, delta_ws, avg_likelihoods
