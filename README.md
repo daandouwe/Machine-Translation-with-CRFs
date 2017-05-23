@@ -47,7 +47,7 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 * One iteration over the whole `eps-40k-ml10-5trans`: [weights](trained-weights/eps-40k-ml10-5trans/trained-1-weights.pkl). See training settings [here](trained-weights/eps-40k-ml10-5trans/screenshot.png).
 
-* `TODO` One iteration over the whole `eps-40k-ml15-3trans`: [weights](trained-weights/eps-40k-ml10-5trans/trained-1-weights.pkl)
+* `TODO` One iteration over the whole `eps-40k-ml15-3trans`: [weights](trained-weights/eps-40k-ml15-3trans/trained-1-weights.pkl)
 
 ## Dev-set translations
 
