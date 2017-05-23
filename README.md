@@ -50,13 +50,21 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 * `TODO` One iteration over the whole `eps-40k-ml15-3trans`: [weights](trained-weights/eps-40k-ml15-3trans/trained-1-weights.pkl)
 
+## Training-set translations
+
+We have some wonderful training-set translations! The [reference translations](prediction/eps-40k-ml10-3trans/reference.txt) of the training-set.
+
+* [Translations](prediction/eps-40k-ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU = 4.04.
+
+* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = 4.04.
+
 ## Dev-set translations
 
 We have obtained the following translations with the above trained weights. See also the [reference translations](prediction/dev/reference.txt) of the dev-set.
 
-* [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU score: ...
+* [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU = ...
 
-* [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU score: ...
+* [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = ...
 
 ## Some notes on training
 
