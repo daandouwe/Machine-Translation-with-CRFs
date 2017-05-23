@@ -143,7 +143,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                     print('P(y,d|x) = {}'.format(joint_prob(d, tgt_edge_weights, I_tgt, root_tgt, log=prob_log)))
                     
                     n = 100
-                    d, count = sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
+                    d, count = ancestral_sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
                     candidates = write_derrivation(d)
                     print('Most sampled: {0}/{1}'.format(count, n))
                     print("Best y = '{}'".format(candidates.pop()))
@@ -172,6 +172,6 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             print('Learning rates: {}'.format(learning_rates))
 
         if prediction and i%5==0: # save every 5 iterations
-            predict(parses[0:prediction_length], w, i, prediction)
+            predict(parses[0:prediction_length], w, i+1, prediction)
 
     return ws, delta_ws

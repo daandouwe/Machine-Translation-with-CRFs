@@ -139,7 +139,7 @@ def viterbi_log(forest: CFG, tsort: list, edge_weights: dict, inside: dict, root
     return V
 
 
-def sample(num_samples: int, forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Symbol) -> dict:
+def ancestral_sample(num_samples: int, forest: CFG, tsort: list, edge_weights: dict, inside: dict, root: Symbol) -> dict:
     """Returns the viterbi decoding of hypergraph"""
     samples = list()
     for i in range(num_samples):

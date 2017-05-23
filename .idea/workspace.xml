@@ -2,12 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7e2d4e05-4a1f-4b4f-a829-f2717ffc9ef9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Machine-Translation-with-CRFs.iml" afterPath="$PROJECT_DIR$/.idea/Machine-Translation-with-CRFs.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/trained-weights/eps-40k-ml10-3trans/screenshot.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/trained-weights/eps-40k-ml10-3trans/trained-1-weights.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/trained-weights/eps-40k-ml10-5trans/screenshot.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/trained-weights/eps-40k-ml10-5trans/trained-1-weights.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/dev/ml10-3trans/sampled-predictions-1-counts.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/dev/ml10-3trans/sampled-predictions-1.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/dev/reference.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/eps-40k-ml10-3trans/reference.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/eps-40k-ml10-5trans/reference.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/eps-40k-ml10-5trans/viterbi-predictions-1-0.1x.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/eps-40k-ml10-5trans/viterbi-predictions-1-100x.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/eps-40k-ml10-5trans/viterbi-predictions-1-10x.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/prediction/40k-5trans/viterbi-predictions-1.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/prediction/dev/ml10-3trans/viterbi-predictions-1-10x.txt" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/prediction/eps-40k-ml10-3trans/viterbi-predictions-0.txt" afterPath="$PROJECT_DIR$/prediction/eps-40k-ml10-3trans/viterbi-predictions-1.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/check-weight.py" afterPath="$PROJECT_DIR$/check-weight.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features.py" afterPath="$PROJECT_DIR$/features.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graph.py" afterPath="$PROJECT_DIR$/graph.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multi-bleu-command.txt" afterPath="$PROJECT_DIR$/multi-bleu-command.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/predict.py" afterPath="$PROJECT_DIR$/predict.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prediction/dev/ml10-3trans/viterbi-predictions-1.txt" afterPath="$PROJECT_DIR$/prediction/dev/ml10-3trans/viterbi-predictions-1.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prediction/dev/ml10-5trans/viterbi-predictions-1.txt" afterPath="$PROJECT_DIR$/prediction/dev/ml10-5trans/viterbi-predictions-1.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sgd.py" afterPath="$PROJECT_DIR$/sgd.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -48,7 +67,7 @@
         <entry file="file://$PROJECT_DIR$/processing.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="89">
-              <caret line="166" column="0" lean-forward="true" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
+              <caret line="166" column="0" lean-forward="false" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
               </folding>
@@ -60,9 +79,12 @@
         <entry file="file://$PROJECT_DIR$/features.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1514">
-              <caret line="400" column="13" lean-forward="true" selection-start-line="400" selection-start-column="13" selection-end-line="400" selection-end-column="13" />
+              <caret line="402" column="13" lean-forward="false" selection-start-line="402" selection-start-column="13" selection-end-line="402" selection-end-column="13" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
+                <marker date="1495539745000" expanded="true" signature="18053:18219" ph="..." />
+                <marker date="1495539745000" expanded="true" signature="18321:18735" ph="..." />
+                <marker date="1495539745000" expanded="true" signature="18488:18706" ph="..." />
               </folding>
             </state>
           </provider>
@@ -80,11 +102,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="save-parses.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="save-parses.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/save-parses.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="104">
-              <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+            <state relative-caret-position="464">
+              <caret line="33" column="38" lean-forward="false" selection-start-line="33" selection-start-column="38" selection-end-line="33" selection-end-column="38" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -92,11 +114,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="check-weight.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="check-weight.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/check-weight.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="50" lean-forward="false" selection-start-line="19" selection-start-column="50" selection-end-line="19" selection-end-column="50" />
+            <state relative-caret-position="525">
+              <caret line="35" column="25" lean-forward="false" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -108,7 +130,7 @@
         <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_bundle/pydev_monkey_qt.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="119">
-              <caret line="67" column="49" lean-forward="true" selection-start-line="67" selection-start-column="49" selection-end-line="67" selection-end-column="49" />
+              <caret line="67" column="49" lean-forward="false" selection-start-line="67" selection-start-column="49" selection-end-line="67" selection-end-column="49" />
               <folding />
             </state>
           </provider>
@@ -360,9 +382,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="266" y="23" width="1662" height="959" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1218769" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1218769" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -416,18 +438,8 @@
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_bundle/pydev_monkey_qt.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
-          <caret line="67" column="49" lean-forward="true" selection-start-line="67" selection-start-column="49" selection-end-line="67" selection-end-column="49" />
+          <caret line="67" column="49" lean-forward="false" selection-start-line="67" selection-start-column="49" selection-end-line="67" selection-end-column="49" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/check-weight.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="50" lean-forward="false" selection-start-line="19" selection-start-column="50" selection-end-line="19" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -454,7 +466,7 @@
     <entry file="file://$PROJECT_DIR$/processing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="89">
-          <caret line="166" column="0" lean-forward="true" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
+          <caret line="166" column="0" lean-forward="false" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
           </folding>
@@ -464,19 +476,32 @@
     <entry file="file://$PROJECT_DIR$/features.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1514">
-          <caret line="400" column="13" lean-forward="true" selection-start-line="400" selection-start-column="13" selection-end-line="400" selection-end-column="13" />
+          <caret line="402" column="13" lean-forward="false" selection-start-line="402" selection-start-column="13" selection-end-line="402" selection-end-column="13" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
+            <marker date="1495539745000" expanded="true" signature="18053:18219" ph="..." />
+            <marker date="1495539745000" expanded="true" signature="18321:18735" ph="..." />
+            <marker date="1495539745000" expanded="true" signature="18488:18706" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/save-parses.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        <state relative-caret-position="464">
+          <caret line="33" column="38" lean-forward="false" selection-start-line="33" selection-start-column="38" selection-end-line="33" selection-end-column="38" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/check-weight.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="35" column="25" lean-forward="false" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>

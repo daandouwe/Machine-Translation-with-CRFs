@@ -16,6 +16,7 @@ w2 = load_weights(savepath2)
 #w9 = load_weights(savepath9)
 #w10 = load_weights(savepath10)
 print(len(w1)) = 218
+
 def check(w):
 	for k, v in sorted(w.items(), key=lambda x: x[1], reverse=True):
 		print('{}'.format(k).ljust(25) + '{}'.format(v))
@@ -30,5 +31,6 @@ def check_difference(w1, w2):
 		print('{}'.format(k).ljust(25) + '{}'.format(v - w2[k]))
 
 check(w1)
+
 #compare(w1, w2)
 #check_difference(w1, w2)
