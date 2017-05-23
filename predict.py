@@ -14,7 +14,9 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 
 	else:
 		f = open(savepath + 'viterbi-predictions-{0}.txt'.format(k), 'w')
-		if sample: g = open(savepath + 'sampled-predictions-{0}.txt'.format(k), 'w')
+		if sample: 
+			g = open(savepath + 'sampled-predictions-{0}.txt'.format(k), 'w')
+			h = open(savepath + 'sampled-predictions-{0}-counts.txt'.format(k), 'w')
 
 	print('predicting...')
 	bar = progressbar.ProgressBar(max_value=len(parses))
@@ -57,34 +59,41 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 		viterbi_translation = candidates.pop()
 		
 		if sample: 
-			n = 100
-			d, count = sample(n, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
+			d, count = ancestral_sample(sample, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
 			candidates = write_derrivation(d)
 			sampled_translation = candidates.pop()
 
 		if l==len(parses)-1: # not enter on last line, otherwise perl script crashes
 			f.write(viterbi_translation)
-			if sample: g.write(sampled_translation)
+			if sample: 
+				g.write(sampled_translation)
+				h.write(str(count))
 		else:
 			f.write(viterbi_translation + '\n')
-			if sample: g.write(sampled_translation + '\n')
+			if sample: 
+				g.write(sampled_translation + '\n')
+				h.write(str(count) + '\n')
 
 		bar.update(l+1)
 
 	f.close()
-	if sample: g.close()
+	if sample: 
+		g.close()
+		h.close()
 
 	bar.finish()
 
 if __name__ == "__main__":
-
-	savepath = 'prediction/dev/ml10-3trans/'
-	weightpath = '../parses/eps-40k-ml10-3trans/trained-1-'
-	parsepath = '../parses/dev/ml10-3trans/'
+	
+	weightpath = '../parses/eps-40k-ml10-5trans/trained-1-'
+	# parsepath = '../parses/dev/ml10-5trans/'
+	parsepath = '../parses/eps-40k-ml10-5trans/'
+	# savepath = 'prediction/dev/ml10-5trans/'
+	savepath = 'prediction/eps-40k-ml10-5trans/'
 
 	w = load_weights(weightpath)
 	parses = [load_parses_separate(parsepath, k) for k in range(10)]
-	predict(parses, w, k=1, savepath=savepath, scale_weights=10)
+	predict(parses, w, k=1, savepath=savepath, scale_weights=0.1, sample=False)
 
 
 		

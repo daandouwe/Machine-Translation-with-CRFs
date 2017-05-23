@@ -370,10 +370,10 @@ def get_full_fset(parses, src_tgt, tgt_src, sparse=False):
     :returns fset: a the set of all features used in all of the forests in `parses` together in one set
     """
     fset = set()
-    for tgt_forest, ref_forest, src_fsa in parses:
+    for tgt_forest, ref_forest, src_fsa, tgt_sent in parses:
         _, fset2 = featurize_edges(ref_forest, src_fsa, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse,
                                    src_tgt=src_tgt, tgt_src=tgt_src)
-        _, fset1 = featurize_edges(tgt_forest, src_fsa, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse,
+        _, fset1 = featurize_edges(tgt_forest, src_fsa, tgt_sent=tgt_sent, sparse_del=sparse, sparse_ins=sparse, sparse_trans=sparse,
                                    src_tgt=src_tgt, tgt_src=tgt_src)
         fset.update(fset1 | fset2)
     return fset
@@ -389,12 +389,13 @@ def featurize_edges(forest, src_fsa, tgt_sent='',
     fset_accum = set()
     for edge in forest:
         if finite:
-            edge2fmap[edge], fset = simple_features_finite(edge, src_fsa, eps, sparse_del, sparse_ins, sparse_trans)
+            edge2fmap[edge], fset = simple_features_finite(edge, src_fsa, eps=eps, 
+                                                           sparse_del=sparse_del, sparse_ins=sparse_ins, sparse_trans=sparse_trans)
         else:
-            edge2fmap[edge], fset = simple_features(edge, src_fsa, eps, sparse_del, sparse_ins, sparse_trans, tgt_sent='')
+            edge2fmap[edge], fset = simple_features(edge, src_fsa, tgt_sent='', eps=eps, 
+                                                    sparse_del=sparse_del, sparse_ins=sparse_ins, sparse_trans=sparse_trans)
         fset_accum.update(fset)
     return edge2fmap, fset_accum
-
 
 def weight_function(edge, fmap, wmap) -> float:
     # dot product of fmap and wmap  (working in log-domain)

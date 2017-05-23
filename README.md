@@ -57,6 +57,9 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 * If you want to train on any of the three parses with different settings, please do!
 
+## Trained weights
+
+* One iteration over `eps-40k-ml10-3trans`
  
 ## Some results
 
