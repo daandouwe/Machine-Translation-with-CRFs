@@ -161,7 +161,7 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             # hack: scale weights so that they are at most of the scale 10**scale_weight
             if scale_weight:
                 abs_max = max(map(abs, w_new.values()))
-                if not np.isfinite(abs_max):
+                if not np.isfinite(abs_max): # THIS IS NEW FUCKFUCK
                     print('alarm')
                 for k, v in w_new.items():
                     w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
