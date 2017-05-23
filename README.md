@@ -56,15 +56,14 @@ We have some wonderful training-set translations! The [reference translations](p
 
 * [Translations](prediction/eps-40k-ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU = 4.04.
 
-* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = 4.04.
+* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = ... `TODO` (BLEU-script-issues...)
 
 ## Dev-set translations
 
 We have obtained the following translations with the above trained weights. See also the [reference translations](prediction/dev/reference.txt) of the dev-set.
 
-* [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU = ...
-
-* [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = ...
+* [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU = ...  `TODO` (BLEU-script-issues...)
+* [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = ...  `TODO` (BLEU-script-issues...)
 
 ## Some notes on training
 
