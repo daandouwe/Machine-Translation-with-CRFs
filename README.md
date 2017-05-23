@@ -36,11 +36,15 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 ## Training schedule
 
-* `DONE` I'm at this moment (Monday 12:42) training on `eps-40k-ml10-3trans` and `eps-40k-ml10-5trans` with [these](prediction/eps-40k-ml10-3trans/screenshot.png) resp. [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings. This will take approximately 12 hours.
+* `DONE` Train on `eps-40k-ml10-3trans` for one iteration with  [these](prediction/eps-40k-ml10-3trans/screenshot.png) settings. (Took 11 hours.)
 
-* `TODO` I would propose to use the same settings to train on `eps-40k-ml15-3trans`.
+* `DONE` Train on `eps-40k-ml10-5trans` for one iteration with  [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings. (Took 13 hours.)
 
-* If you want to train on any of the three parses with different settings, please do!
+* `TODO` Train on `eps-40k-ml15-3trans` for one iteration withe [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings.
+
+* `TODO` Train on `eps-40k-ml10-3trans` for **one more iteration** with [these weights](trained-weights/eps-40k-ml10-3trans/trained-1-weights.pkl) and [these](prediction/eps-40k-ml10-3trans/screenshot.png) settings.
+
+* `TODO` Train on `eps-40k-ml10-5trans` for **one more iteration** with [these weights](trained-weights/eps-40k-ml10-5trans/trained-1-weights.pkl) and [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings.
 
 ## Trained weights
 
