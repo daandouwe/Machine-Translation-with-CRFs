@@ -72,6 +72,16 @@ We have obtained the following translations with the above trained weights. See 
 * [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results:
 `BLEU = 0.00, 65.4/6.5/0.3/0.0`.
 
+## IBM1 translations
+
+As baseline we use the IBM1 word-translations to generate sentence-translations by monotonically translating the Chinese sentences word-by-word using this [code](ibm-translate.py).
+
+This achieves the following results: 
+
+* [Translation](prediction/ibm1/ibm1-prediction.txt) of the training-set. `BLEU = 7.21, 60.4/12.8/3.4/1.3`
+
+* [Translation]() of the dev-set.
+
 ## Some notes on training
 
 * Every experiment I've performed so far unequivocally shows that averaging the update of `w` over a minibatch is *bad*. Instead we should update `w` *sentence per sentence*.  ~Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.~ 
