@@ -1,4 +1,4 @@
-from util import save_weights, load_weights
+from util import save_weights, load_weights, joint_prob
 from processing import *
 from graph import *
 from features import weight_function
@@ -14,6 +14,7 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 
 	else:
 		f = open(savepath + 'viterbi-predictions-{0}.txt'.format(k), 'w')
+		p = open(savepath + 'viterbi-predictions-{0}-probs.txt'.format(k), 'w')
 		if sample: 
 			g = open(savepath + 'sampled-predictions-{0}.txt'.format(k), 'w')
 			h = open(savepath + 'sampled-predictions-{0}-counts.txt'.format(k), 'w')
@@ -62,14 +63,17 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 			d, count = ancestral_sample(sample, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
 			candidates = write_derrivation(d)
 			sampled_translation = candidates.pop()
+			prob = joint_prob(d, tgt_edge_weights, I_tgt, root_tgt)
 
 		if l==len(parses)-1: # not enter on last line, otherwise perl script crashes
 			f.write(viterbi_translation)
+			p.write(str(prob))
 			if sample: 
 				g.write(sampled_translation)
 				h.write('{0}/{1}'.format(count, sample))
 		else:
 			f.write(viterbi_translation + '\n')
+			p.write(str(prob) + '\n')
 			if sample: 
 				g.write(sampled_translation + '\n')
 				h.write('{0}/{1}\n'.format(count, sample))
@@ -85,9 +89,9 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 
 if __name__ == "__main__":
 	
-	weightpath = '../parses/eps-40k-ml10-5trans/trained-1-'
-	parsepath = '../parses/eps-40k-ml10-5trans/'
-	savepath = 'prediction/eps-40k-ml10-5trans/'
+	weightpath = '../parses/eps-40k-ml10-3trans/trained-1-'
+	parsepath = '../parses/eps-40k-ml10-3trans/'
+	savepath = 'prediction/eps-40k-ml10-3trans/'
 
 	w = load_weights(weightpath)
 	parses = [load_parses_separate(parsepath, k) for k in range(100)]
