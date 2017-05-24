@@ -78,9 +78,9 @@ As baseline we use the IBM1 word-translations to generate sentence-translations 
 
 This achieves the following results: 
 
-* [Translation](prediction/ibm1/ibm1-prediction.txt) of the training-set. `BLEU = 7.21, 60.4/12.8/3.4/1.3`
+* [Translation](prediction/ibm1/ibm1-prediction.txt) of the training-set. Results: `BLEU = 7.21, 60.4/12.8/3.4/1.3`
 
-* [Translation]() of the dev-set.
+* [Translation]() of the dev-set. Results:
 
 ## Some notes on training
 
