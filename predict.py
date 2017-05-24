@@ -67,12 +67,12 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 			f.write(viterbi_translation)
 			if sample: 
 				g.write(sampled_translation)
-				h.write(str(count))
+				h.write('{0}/{1}'.format(count, sample))
 		else:
 			f.write(viterbi_translation + '\n')
 			if sample: 
 				g.write(sampled_translation + '\n')
-				h.write(str(count) + '\n')
+				h.write('{0}/{1}\n'.format(count, sample))
 
 		bar.update(l+1)
 
@@ -86,14 +86,12 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 if __name__ == "__main__":
 	
 	weightpath = '../parses/eps-40k-ml10-5trans/trained-1-'
-	# parsepath = '../parses/dev/ml10-5trans/'
 	parsepath = '../parses/eps-40k-ml10-5trans/'
-	# savepath = 'prediction/dev/ml10-5trans/'
 	savepath = 'prediction/eps-40k-ml10-5trans/'
 
 	w = load_weights(weightpath)
-	parses = [load_parses_separate(parsepath, k) for k in range(10)]
-	predict(parses, w, k=1, savepath=savepath, scale_weights=0.1, sample=False)
+	parses = [load_parses_separate(parsepath, k) for k in range(100)]
+	predict(parses, w, k=1, savepath=savepath, scale_weights=False, sample=100)
 
 
 		

@@ -57,6 +57,12 @@ def save_likelihoods(likelihoods, savepath):
     pickle.dump(likelihoods, f, protocol=4)
     f.close()
 
+def load_likelihoods(savepath):
+    f = open(savepath + 'likelihoods.pkl', 'rb')
+    likelihoods = pickle.load(f)
+    f.close()
+    return likelihoods
+
 def partition(l, n):
     return [l[i:i + n] for i in range(0, len(list(l)), n)]
 

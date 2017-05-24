@@ -169,4 +169,3 @@ def ancestral_sample(num_samples: int, forest: CFG, tsort: list, edge_weights: d
     return most_sampled, counts
 
 
-

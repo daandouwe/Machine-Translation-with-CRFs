@@ -122,8 +122,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
                 expected_features_D_xy = expected_feature_vector(ref_forest, I_ref, O_ref, ref_edge2fmap)
                 # update w
                 w_step, d_w = update_w(w, expected_features_D_xy, expected_features_Dn_x, delta=delta_k, regularizer=regularizer)
-
-                # save likelihoods
+                
+                # store likelihoods
                 if I_ref and I_tgt: # for the case of an empty forest! since log(0) = -inf
                     # compute the likelihood of the target sentence
                     if not I_ref[root_ref]==0 and not I_tgt[root_tgt] == 0:
@@ -161,13 +161,20 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             # hack: scale weights so that they are at most of the scale 10**scale_weight
             if scale_weight:
                 abs_max = max(map(abs, w_new.values()))
-                if not np.isfinite(abs_max): # THIS IS NEW FUCKFUCK
-                    print('alarm')
-                for k, v in w_new.items():
-                    w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
+                if np.isfinite(abs_max):
+                    for k, v in w_new.items():
+                        w_new[k] = v / 10**(int(np.log10(abs_max))+1 - scale_weight)
+                    # update
+                    w = w_new
+                else:
+                    # return to previous weight
+                    print('inf or nan')
+                    w = ws[-2]
+                    print(tgt_sent)
+
 
             # update after each minibatch
-            w = w_new        
+            # w = w_new        
             ws.append(w)
             delta_ws.append(delta_w)
 

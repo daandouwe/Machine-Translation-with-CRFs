@@ -3,12 +3,12 @@ from sgd import sgd_minibatches
 from collections import defaultdict
 from processing import *
 from features import featurize_edges, get_full_fset
-from util import save_weights, load_weights, partition, save_likelihoods
+from util import save_weights, load_weights, partition
 from predict import predict
 
 
 savepath = '../parses/eps-40k-ml10-5trans/'
-predictpath =  'prediction/nonempty/eps-40k-ml10-5trans/'
+predictpath =  'prediction/nonempty/reg/eps-40k-ml10-5trans/'
 
 parses = [load_parses_separate(savepath, k) for k in range(28000)]
 
@@ -26,14 +26,11 @@ for feature in fset:
 k = 1
 minibatches = partition(cleaned_parses, k)
 w_trained, delta_ws, likelihoods = sgd_minibatches(iters=1, delta_0=100, w=w_init, minibatches=minibatches, batch_size=k, parses=cleaned_parses, 
-										  		   shuffle=True, sparse=True, scale_weight=2, regularizer=0, lmbda=0.001,
-										  		   bar=True, log=False, log_last=False, check_convergence=False, 
-										  		   savepath=savepath, prediction=predictpath, prediction_length=200)
+									  			   shuffle=True, sparse=True, scale_weight=False, regularizer=0.1, lmbda=0.001,
+									  			   bar=True, log=False, log_last=False, check_convergence=False, 
+									  			   savepath=False, prediction=False, prediction_length=False)
 
 print(likelihoods)
-save_likelihoods(likelihoods, predictpath)
-
-
 
 # printing for verification
 w = w_trained[-1]

@@ -1,0 +1,36 @@
+from util import save_weights, load_weights
+from processing import *
+from graph import *
+from features import weight_function
+import progressbar
+
+ch_en, en_ch, _, _ = translations(path='data/lexicon', k=2, null=2, remove_punct=True)
+
+corpus = read_data(max_sents=200)
+start = 0
+# get only short sentences for ease of training
+corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10][start:]
+
+lexicons = [make_lexicon(ch_sent, ch_en) for ch_sent, _ in corpus]
+# make one big lexicon covering all words
+lexicon = make_total_lexicon(lexicons)
+
+
+f = open('prediction/ibm1/ibm1-prediction.txt', 'w')
+for k, (ch, _) in enumerate(corpus):
+	ch_sent = ch.split()
+	en = []
+	for ch_car in ch_sent:
+		lex = lexicons[k][ch_car]
+		if lex: # crappy shit due to lexicon always containing -EPS-
+			en_car = lex.pop()
+			if en_car == '-EPS-' and lex:
+				en_car = lex.pop()
+		else:
+			en_car = ''
+
+		en.append(en_car)
+	en_sent = ' '.join(en)
+	f.write(en_sent + '\n')
+
+f.close()

@@ -58,17 +58,19 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 We have some wonderful training-set translations! The [reference translations](prediction/eps-40k-ml10-3trans/reference.txt) of the training-set.
 
-* [Translations](prediction/eps-40k-ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU = 4.04.
+* [Translations](prediction/eps-40k-ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. Results: `BLEU = 4.04, 45.7/7.2/2.0/0.5`.
 
-* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = ... `TODO` (BLEU-script-issues...)
+* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results: `BLEU = 0.00, 32.3/2.6/0.1/0.0`.
 
 ## Dev-set translations
 
 We have obtained the following translations with the above trained weights. See also the [reference translations](prediction/dev/reference.txt) of the dev-set.
 
-* [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. BLEU = ...  `TODO` (BLEU-script-issues...)
+* [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. Results: 
+`BLEU = 0.00, 74.7/11.5/1.6/0.2`.
 
-* [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. BLEU = ...  `TODO` (BLEU-script-issues...)
+* [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results:
+`BLEU = 0.00, 65.4/6.5/0.3/0.0`.
 
 ## Some notes on training
 
