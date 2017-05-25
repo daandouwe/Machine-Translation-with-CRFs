@@ -52,7 +52,7 @@ We have some wonderful training-set translations! The [reference translations](p
 
 *Viterbi translations*
 
-* [Translations](prediction/eps-40k-ml10-3trans/saved/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans` and their [probabilities](rediction/eps-40k-ml10-3trans/viterbi-predictions-1-probs.txt). Results: `BLEU = 4.04, 45.7/7.2/2.0/0.5` (200 sentences).
+* [Translations](prediction/eps-40k-ml10-3trans/saved/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans` and their [probabilities](prediction/eps-40k-ml10-3trans/viterbi-predictions-1-probs.txt). Results: `BLEU = 4.04, 45.7/7.2/2.0/0.5` (200 sentences).
 
 * [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results: `BLEU = 0.00, 32.3/2.6/0.1/0.0` (200 sentences).
 
