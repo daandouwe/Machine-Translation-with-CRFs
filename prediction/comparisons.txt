@@ -6,21 +6,21 @@ reference ||| Viterbi translation ||| p(y,d|x) ||| sampled translation ||| times
 
 Training-set
 
-i 'd like to reserve two twin rooms . ||| my like reserve two one pair people room . |||  … ||| …
+i 'd like to reserve two twin rooms . ||| my like reserve two one pair people room . |||  4.16345428027e-10 
 
-do you do alterations ? ||| you may alterations you ? ||| … ||| …
+do you do alterations ? ||| you may alterations you ? ||| 5.51146265653e-05
+ 
+i 'd like some crayfish . ||| my like like some smaller lobster . |||  1.62374728046e-07 
 
-i 'd like some crayfish . ||| my like like some smaller lobster . |||  … ||| …
+can you recommend a good nightclub ? ||| you could suggest one good the club you ? ||| 4.16345428027e-10 
 
-can you recommend a good nightclub ? ||| you could suggest one good the club you ? ||| … ||| …
+my 's happy , green sir . ||| mary is not so old as henry . ||| 4.87124180659e-07
 
-my 's happy , green sir . ||| mary is not so old as henry . ||| 
+what 's the newest color in this season ? ||| this season best new the 's do color ? ||| 4.16345428027e-10
 
-what 's the newest color in this season ? ||| this season best new the 's do color ? ||| … |||
+i have a sore pain here . ||| my here very hurts . ||| 5.51146265653e-05
 
-i have a sore pain here . ||| my here very hurts . ||| 
-
-how much is the breakfast ? ||| breakfast much much ? |||
+how much is the breakfast ? ||| breakfast much much ? ||| 0.000925925772238
 
 
 Format: 
