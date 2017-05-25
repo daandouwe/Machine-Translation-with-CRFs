@@ -25,7 +25,7 @@ For example, we can take some of their [plots and pictures](report/some-ideas/) 
 
 ## The parses
 
-Let's train with *three types of parses*: small sentences of length 10, with only 2 translations (plus `-EPS-`, so 3); small sentences of length 10, with only 4 translations (plus `-EPS-`, so 5); long sentences of length 15, with only 2 translations (plus `-EPS-`, so 3). With the new parallel parser we can now do `max_sents=40000`. See the settings below and the link to the dropbox where they are located.
+Let's train with *two types of parses*: small sentences of length 10, with only 2 translations (plus `-EPS-`, so 3) and small sentences of length 10, with only 4 translations (plus `-EPS-`, so 5). With the new parallel parser we can now easily do `max_sents=40000`. See the settings below and the link to the dropbox where they are located.
 
 * `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
 `corpus = read_data(max_sents=40000)`
@@ -35,11 +35,7 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 `corpus = read_data(max_sents=40000)`
 `corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 10].` [Link to training parses](https://www.dropbox.com/sh/454l7wo4s69nnls/AADz2kWop6nzbsR04-TUih7ja?dl=0&lst=&preview=eps-40k-ml10-5trans.zip). [Link to dev parses](https://www.dropbox.com/sh/454l7wo4s69nnls/AADz2kWop6nzbsR04-TUih7ja?dl=0&lst=&preview=ml10-5trans.zip).
 
-* `ch_en, en_ch, _, _ = translations(path='data/lexicon', k=3, null=3, remove_punct=True)`
-`corpus = read_data(max_sents=20000)`
-`corpus = [(ch, en) for ch, en in corpus if len(en.split()) < 15].`  [Link to training parses](https://www.dropbox.com/sh/454l7wo4s69nnls/AADz2kWop6nzbsR04-TUih7ja?dl=0&lst=&preview=eps-20k.zip). [Link to dev parses](). `TODO`
-
-`Note:` When you select the sentences of a certain length you get a smaller number than 40k! The first example with `<10` gives 28372 parses, but when you put `<15` you will catch more sentences. To make sure that in the final training we can compare the runs for the three different parse-types fairly let's  **only use the parses 0-28k**.
+`Note:` When you select the sentences of a certain length you get a smaller number than 40k! The first example with `<10` gives 28372 parses. To make sure that in the final training we can compare the runs for the two different parse-types fairly let's  **only use the parses 0-28k**.
 
 `Note:` Tim has made a parallel version of save-parses! You can now use the branch parallel to check it out for yourself. If you have 4 cores you can simply run `python save-parse.py --num-cores 8` and see the magic of parallel computing unfold in front of your eyes. Warning: expect massive speedup (4x or more) and some beautiful wind-tunnel effects from your desktop/laptop.
 
