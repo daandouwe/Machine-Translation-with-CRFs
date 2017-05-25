@@ -86,6 +86,10 @@ This achieves the following results:
 
 * [Translations](prediction/ibm1/dev/ibm1-prediction.txt) of the dev-set. Results:  `BLEU = 0.00, 83.8/18.4/3.4/0.4` (200 sentences).
 
+## Individual comparisons
+
+Here is a small [selection](prediction/comparisons.txt) of individual comparisons of translations.
+
 ## Some notes on training
 
 * Every experiment I've performed so far unequivocally shows that averaging the update of `w` over a minibatch is *bad*. Instead we should update `w` *sentence per sentence*.  ~Use a large batch size. Probably in the range `30-100`. This gives stability to the updates of `w`, since most of the features don't 'fire' for one training example.~ 

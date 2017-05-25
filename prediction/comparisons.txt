@@ -1,0 +1,38 @@
+Interesting comparisons.
+
+Format: 
+reference ||| Viterbi translation ||| p(y,d|x) ||| sampled translation ||| times/total ||| ibm1 translation
+
+
+Training-set
+
+i 'd like to reserve two twin rooms . ||| my like reserve two one pair people room . |||  … ||| …
+
+do you do alterations ? ||| you may alterations you ? ||| … ||| …
+
+i 'd like some crayfish . ||| my like like some smaller lobster . |||  … ||| …
+
+can you recommend a good nightclub ? ||| you could suggest one good the club you ? ||| … ||| …
+
+my 's happy , green sir . ||| mary is not so old as henry . ||| 
+
+what 's the newest color in this season ? ||| this season best new the 's do color ? ||| … |||
+
+i have a sore pain here . ||| my here very hurts . ||| 
+
+how much is the breakfast ? ||| breakfast much much ? |||
+
+
+Format: 
+reference ||| Viterbi translation ||| ibm1 translation
+
+
+Development-set
+
+can you change yen into dollars ? ||| please my japanese change into dollar . ||| please to yen exchange into dollars .
+
+i 'm on my way to chicago from minneapolis . ||| in from 'm 'm go to a i . ||| the from minneapolis minneapolis to chicago the 'm .
+
+well , it 's not so serious . ||| well , nothing big problem . ||| well , nothing big problem .
+
+

@@ -91,10 +91,10 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 if __name__ == "__main__":
 	
 	weightpath = 'trained-weights/eps-40k-ml10-3trans/trained-1-'
-	parsepath = '../parses/dev/ml10-3trans/'
-	# parsepath = '../parses/eps-40k-ml10-3trans/'
-	# savepath = 'prediction/eps-40k-ml10-3trans/'
-	savepath = 'prediction/dev/ml10-3trans/'
+	# parsepath = '../parses/dev/ml10-3trans/'
+	parsepath = '../parses/eps-40k-ml10-3trans/'
+	savepath = 'prediction/eps-40k-ml10-3trans/'
+	# savepath = 'prediction/dev/ml10-3trans/'
 
 	w = load_weights(weightpath)
 	parses = [load_parses_separate(parsepath, k) for k in range(200)]
