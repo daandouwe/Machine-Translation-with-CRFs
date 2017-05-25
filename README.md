@@ -7,7 +7,7 @@ The following two papers are useful reference material for the CRF-model:
 
 * [A Discriminative Latent Variable Model for Statistical Machine Translation](readings/Blunsom08.pdf)
 
-* [Unsupervised Word Alignment with Arbitrary Features](readings/Unsupervised Word Alignment with Arbitrary Features.pdf)
+* [Unsupervised Word Alignment with Arbitrary Features](readings/UnsupervisedWordAlignmentwithArbitraryFeatures.pdf)
 
 For example, we can take some of their [plots and pictures](report/some-ideas/) as inspiration.
 
