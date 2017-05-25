@@ -21,7 +21,6 @@ def read_data_dev(path='data/dev1.zh-en', max_sents=5):
         ch = sents[0]
         en = '|||'.join(sents[1:])
         corpus.append((ch, en))
-        print(en)
     return corpus
 
 

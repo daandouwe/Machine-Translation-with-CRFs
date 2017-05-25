@@ -40,47 +40,51 @@ Let's train with *three types of parses*: small sentences of length 10, with onl
 
 * `DONE` Train on `eps-40k-ml10-5trans` for one iteration with  [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings. (Took 13 hours.)
 
-* ~`TODO` Train on `eps-40k-ml15-3trans` for one iteration withe [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings.~
-
-* ~`TODO` Train on `eps-40k-ml10-3trans` for **one more iteration** with [these weights](trained-weights/eps-40k-ml10-3trans/trained-1-weights.pkl) and [these](prediction/eps-40k-ml10-3trans/screenshot.png) settings.~
-
-* ~`TODO` Train on `eps-40k-ml10-5trans` for **one more iteration** with [these weights](trained-weights/eps-40k-ml10-5trans/trained-1-weights.pkl) and [these](prediction/eps-40k-ml10-5trans/screenshot.png) settings.~
-
 ## Trained weights
 
-* One iteration over the whole `eps-40k-ml10-3trans`: [weights](trained-weights/eps-40k-ml10-3trans/trained-1-weights.pkl). See training settings [here](trained-weights/eps-40k-ml10-3trans/screenshot.png).
+*  One iteration over the whole `eps-40k-ml10-3trans`: [weights](trained-weights/eps-40k-ml10-3trans/trained-1-weights.pkl). See training settings [here](trained-weights/eps-40k-ml10-3trans/screenshot.png).
 
-* One iteration over the whole `eps-40k-ml10-5trans`: [weights](trained-weights/eps-40k-ml10-5trans/trained-1-weights.pkl). See training settings [here](trained-weights/eps-40k-ml10-5trans/screenshot.png).
-
-* `TODO` One iteration over the whole `eps-40k-ml15-3trans`: [weights](trained-weights/eps-40k-ml15-3trans/trained-1-weights.pkl)
+*  One iteration over the whole `eps-40k-ml10-5trans`: [weights](trained-weights/eps-40k-ml10-5trans/trained-1-weights.pkl). See training settings [here](trained-weights/eps-40k-ml10-5trans/screenshot.png).
 
 ## Training-set translations
 
 We have some wonderful training-set translations! The [reference translations](prediction/eps-40k-ml10-3trans/reference.txt) of the training-set.
 
-* [Translations](prediction/eps-40k-ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. Results: `BLEU = 4.04, 45.7/7.2/2.0/0.5`.
+*Viterbi translations*
 
-* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results: `BLEU = 0.00, 32.3/2.6/0.1/0.0`.
+* [Translations](prediction/eps-40k-ml10-3trans/saved/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans` and their [probabilities](rediction/eps-40k-ml10-3trans/viterbi-predictions-1-probs.txt). Results: `BLEU = 4.04, 45.7/7.2/2.0/0.5` (200 sentences).
+
+* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results: `BLEU = 0.00, 32.3/2.6/0.1/0.0` (200 sentences).
+
+*Sampled translations*
+
+* [Translations](prediction/eps-40k-ml10-3trans/sampled-predictions-1.txt) for `eps-40k-ml10-3trans` and [their sample-frequency](prediction/eps-40k-ml10-3trans/sampled-predictions-1-counts.txt). Results: `BLEU = ...` (200 sentences).
 
 ## Dev-set translations
 
 We have obtained the following translations with the above trained weights. See also the [reference translations](prediction/dev/reference.txt) of the dev-set.
 
+*Viterbi translations*
+
 * [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. Results: 
-`BLEU = 0.00, 74.7/11.5/1.6/0.2`.
+ `BLEU = 0.00, 75.6/12.5/1.5/0.2` (200 sentences). `BLEU = 0.00, 74.7/11.5/1.6/0.2` (500 sentences).
 
 * [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results:
-`BLEU = 0.00, 65.4/6.5/0.3/0.0`.
+`BLEU = 0.00, 65.4/6.4/0.4/0.0` (200 sentences) `BLEU = 0.00, 65.4/6.5/0.3/0.0` (500 sentences).
+
+*Sampled translations*
+
+* [Translations](prediction/dev/ml10-3trans/sampled-predictions-1.txt) for `eps-40k-ml10-3trans` and [their sample-frequency](prediction/dev/ml10-3trans/sampled-predictions-1-counts.txt). Results: `BLEU = ...` (200 sentences).
 
 ## IBM1 translations
 
-As baseline we use the IBM1 word-translations to generate sentence-translations by monotonically translating the Chinese sentences word-by-word using this [code](ibm-translate.py).
+As an interesting baseline we use the IBM1 word-translations to generate sentence-translations by monotonically translating the Chinese sentences word-by-word using this [code](ibm-translate.py).
 
 This achieves the following results: 
 
-* [Translation](prediction/ibm1/ibm1-prediction.txt) of the training-set. Results: `BLEU = 7.21, 60.4/12.8/3.4/1.3`
+* [Translations](prediction/ibm1/training/ibm1-prediction.txt) of the training-set. Results: `BLEU = 7.22, 60.6/12.8/3.4/1.3` (200 sentences). 
 
-* [Translation]() of the dev-set. Results:
+* [Translations](prediction/ibm1/dev/ibm1-prediction.txt) of the dev-set. Results:  `BLEU = 0.00, 83.8/18.4/3.4/0.4` (200 sentences).
 
 ## Some notes on training
 

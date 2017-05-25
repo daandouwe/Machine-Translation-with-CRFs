@@ -58,12 +58,13 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 		d = viterbi(target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
 		candidates = write_derrivation(d)
 		viterbi_translation = candidates.pop()
+		prob = joint_prob(d, tgt_edge_weights, I_tgt, root_tgt)
+
 		
 		if sample: 
 			d, count = ancestral_sample(sample, target_forest, tgt_tsort, tgt_edge_weights, I_tgt, root_tgt) # use exp!
 			candidates = write_derrivation(d)
 			sampled_translation = candidates.pop()
-			prob = joint_prob(d, tgt_edge_weights, I_tgt, root_tgt)
 
 		if l==len(parses)-1: # not enter on last line, otherwise perl script crashes
 			f.write(viterbi_translation)
@@ -89,12 +90,14 @@ def predict(parses, w, k, savepath, sample=False, scale_weights=False):
 
 if __name__ == "__main__":
 	
-	weightpath = '../parses/eps-40k-ml10-3trans/trained-1-'
-	parsepath = '../parses/eps-40k-ml10-3trans/'
-	savepath = 'prediction/eps-40k-ml10-3trans/'
+	weightpath = 'trained-weights/eps-40k-ml10-3trans/trained-1-'
+	parsepath = '../parses/dev/ml10-3trans/'
+	# parsepath = '../parses/eps-40k-ml10-3trans/'
+	# savepath = 'prediction/eps-40k-ml10-3trans/'
+	savepath = 'prediction/dev/ml10-3trans/'
 
 	w = load_weights(weightpath)
-	parses = [load_parses_separate(parsepath, k) for k in range(100)]
+	parses = [load_parses_separate(parsepath, k) for k in range(200)]
 	predict(parses, w, k=1, savepath=savepath, scale_weights=False, sample=100)
 
 
