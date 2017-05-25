@@ -190,8 +190,8 @@ def sgd_minibatches(iters, delta_0, w, minibatches=[], parses=[], batch_size=20,
             print('delta w: {}\n'.format([ds / len(w.keys()) for ds in delta_ws]))
             print('Learning rates: {}'.format(learning_rates))
 
-        if prediction and i%5==0: # save every 5 iterations
-            predict(parses[0:prediction_length], w, i+1, prediction)
+        # if prediction and i%5==0: # save every 5 iterations
+        predict(parses[0:prediction_length], w, i+1, prediction)
 
     return ws, delta_ws, avg_likelihoods
 
