@@ -9,6 +9,8 @@ The following two papers are useful reference material for the CRF-model:
 
 * [Unsupervised Word Alignment with Arbitrary Features](readings/UnsupervisedWordAlignmentwithArbitraryFeatures.pdf)
 
+* [Hierarchical Phrase-Based Translation](readings/Chiang07.pdf)
+
 For example, we can take some of their [plots and pictures](report/some-ideas/) as inspiration.
 
 ## How-to
