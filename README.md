@@ -3,7 +3,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/). Read the [project descrip
 
 ## Report
 
-The following two papers are useful reference material for the CRF-model:
+The following papers are useful reference material for the CRF-model:
 
 * [A Discriminative Latent Variable Model for Statistical Machine Translation](readings/Blunsom08.pdf)
 
