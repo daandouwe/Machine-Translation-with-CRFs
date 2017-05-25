@@ -1,0 +1,274 @@
+\documentclass[11pt, a4paper]{article}
+
+
+\title{NLP2 Report}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[compact,explicit]{titlesec}
+\usepackage{geometry}
+\usepackage{amsmath,amsfonts,amsthm,bm}
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithm}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
+\usetikzlibrary{fit,positioning}
+
+% \usepackage{CJKutf8}
+% \AtBeginDvi{\input{zhwinfonts}}
+
+
+
+\begin{document}
+\maketitle
+Empirical evaluation (max 3 points): Is the experimental setup sound/convincing? Are experimental findings presented in an organised and effective manner? Here we expected to learn about:
+\begin{enumerate}
+	\item the data, experimental setup, practical constraints
+	\item training conditions (the various choices and hyperparameters discussed and justified)
+	\item ablation studies if applicable
+	\item test results
+	\item a critical discussion of findings
+\end{enumerate}
+
+\section{the data, experimental setup, practical constraints}
+
+\begin{enumerate}
+	\item You have hyper-parameters: SGD learning rate schedule, regularisation strength. Investigate them. Plot likelihood and validation BLEU.
+	\item You have features of 3 sorts: segmentation, lexical translation, word order. Conduct ablation experiments.
+	\item Report BLEU1 (it gives an ideal of how well your model performs lexical selection), report BLEU4 (it gives an idea of lexical selection and word ord).
+\end{enumerate}
+
+\subsection{experimental setup}
+
+To evaluate the model we use a Chinese-English corpus consisting of 44k sentence pairs \cite{takezawa}. This corpus has two advantages: the sentences are relatively short (at most 30 words, and most of them shorter than 10), and the test-set contain multiple reference-translations \cite{takezawa}
+
+
+We use an adaptive scheme for the learning rate of SGD following \cite{bottou}, where we let the learning rate decay as an inverse exponential of the number of parameter-updates. That is, we define the learning $\delta_t$ at parameter-update $t$ to be
+\begin{align*}
+\delta_t = \delta_0 (1 + \gamma\delta_0 t)^{-1}
+\end{align*}
+where $\delta_0$ is the initial learning rate at $t=0$ and $\gamma$ and aditional hyperparameter to determined. See the plot \ref{fig:learning-rates} for the effect of different values of $\gamma$.
+
+\subsection{Determining hyperparameter}
+In order to determine the settings for the hyperparameters involved in the Stochastic Gradient Descent (SGD) we performed a series of experiments on a small selection of training-data (200 sentence-pairs). These concern the choice of $\delta_0$ and $\gamma$, the strength of the $L_2$ regularizer $\lambda$, and the size of the minibatch. Plots \ref{fig:plots-likelihood} report of the experiments to determine the choice of $\delta_0$ and $\gamma$ by the average likelihood of training-sentences over iterations, and plots \ref{fig:plots-bleu} by the evolution of the BLEU score of the predictions the training-set. The plots in \ref{fig:batchsize} report of the experiments performed to determine the right batch-size by tracking the evolution of the BLEU-score. 
+
+In these plots you can clearly see that...
+
+The final settings chosen based on the experiments are $\delta_0=10$, $\gamma=1.0$, $\lambda=1$ and a minibatch-size of 1 sentence.
+
+\subsection{results} % (fold)
+\label{sub:results}
+
+In tabel \ref{table:results} we list the results of the 
+
+
+Table \ref{table:hyperparams} lists the final choices of training
+
+
+
+
+\begin{table}
+\begin{tabular}{ |l| } 
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} I'd like to reserve two twin rooms. \\
+\textbf{V:} My like reserve two one pair people room. \\
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} Do you do alterations? \\
+\textbf{V:} You may alterations you? \\
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} I'd like some crayfish. \\
+\textbf{V:} My like like some smaller lobster. \\
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} I have a sore pain here. \\
+\textbf{V:} My here very hurts. \\
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} My's happy, green sir. \\
+\textbf{V:} Mary is not so old as henr .\\
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} How much is the breakfast? \\
+\textbf{V:} Breakfast much much? \\
+\hline
+\end{tabular}
+\caption{Example Viterbi-translations (V) against a reference translation (R)}
+\label{table:translations}
+\end{table}
+
+\begin{table}
+\begin{tabular}{ |l| } 
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} Can you change yen into dollars? \\
+\textbf{V:} Please my japanese change into dollar. \\
+\textbf{I:} Please to yen exchange into dollars. \\
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} Well, it's not so serious. \\
+\textbf{V:} Well, nothing big problem. \\
+\textbf{I:} Well, nothing big problem. \\
+\hline
+\textbf{C:} Chinese here! \\
+\textbf{R:} I'm on my way to chicago from minneapolis. \\
+\textbf{V:} In from 'm 'm go to a I. \\
+\textbf{I:} The from minneapolis minneapolis to chicago the 'm. \\
+\hline 
+\end{tabular}
+\caption{Example Viterbi (V) and IBM1 heuristic translations (I) against a reference translation (R)}
+\label{table:translations-2}
+\end{table}
+
+
+% ? a a a
+% ? a a i
+% ? a a the
+% ? a i a
+% ? a i i
+% ? a i the
+% ? a the a
+% ? a the i
+% ? a the the
+% ? alter a a a
+% ? alter a a i
+% ? alter a a the
+% ? alter a i a
+% ? alter a i i
+% ? alter a i the
+% ? alter a the a
+% ? alter a the i
+% ? alter a the the
+% ? alter can a a a
+% \vdots
+% ? alterations can i the the
+% ? alterations can the a a
+% ? alterations can the a i
+% ? alterations can the a the
+% ? alterations can the i a
+% ? alterations can the i i
+% ? alterations can the i the
+% ? alterations can the the a
+% ? alterations can the the i
+% ? alterations can the the the
+% ? alterations can you a a a
+% ? alterations can you a a i
+% ? alterations can you a a the
+% ? alterations can you a i a
+% ? alterations can you a i i
+% ? alterations can you a i the
+% ? alterations can you a the a
+% ? alterations can you a the i
+% ? alterations can you a the the
+% ? alterations can you i a a
+
+
+
+\begin{table}
+{\tiny
+\begin{tabular}{ |l| }
+\hline
+a alterations you ? you \\
+i the i alter ? do \\
+your ? you a the a \\
+? you alter your a  \\
+i a i alterations ? you \\
+the the a do ? can \\
+alterations ? you can you i i the \\
+alterations you ? i the i \\
+may ? alter you a the a \\
+may do ? alter i a a \\
+i ? you may \\
+a can alter ? you your \\
+i the i may alterations ? you \\
+alter do ? can your the the the \\
+alter ? you may your a the i \\
+alterations you ? may  a \\
+alter do ? you i i i \\
+the the i your may do ? alterations \\
+i  alter you ? can you \\
+a the a may you ? alterations \\
+a do ? alterations may you \\
+the a i alterations ? can \\
+? do may your the i i \\
+your ? you can the a the \\
+? you alterations can your the the a \\
+can ? do alterations your the \\
+alterations you ? your a a i \\
+? do alterations can \\
+i a the you ? alterations you \\
+can ? do alterations your a a i \\
+your can alterations do ? \\
+the the i your may ? alter \\
+a a a ? you alter may your \\
+your ? you alterations can i a i \\
+alter you ? can your the the the \\
+? you alterations can i  \\
+may ? alterations your a a \\
+alterations you ? may a  \\
+you ? may you i the a \\
+i the i your alterations ? may \\
+your ? do alter can i the the \\
+your ? you can i a i \\
+i the the ? you alter \\
+? you your i \\
+alter you ? your i the i \\
+? do alter your the a a \\
+i  alterations ? you may \\
+? you may the the the \\
+may do ? i a \\
+\hline
+\end{tabular}}
+\caption{An impression of the massive search-space of possible translations for the sentence `CHINESE HERE'. Shown is a selection of 50 out of a total of 26.514 sentences in the target forest. Note for example that only 1.458 sentence ($<6\%$) have the question mark at the end of the sentence---the most modest requirement for a proper translation of the sentence. Viewed this way, it is quite an achievement that the trained model managed to selecte 'you may alterations you ?' as the viterbi translation.}
+\label{table:derrivations}
+\end{table}
+
+% \begin{CJK*}{UTF8}{zhsong}
+% 文章内容。
+% \end{CJK*}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{ |l|c| } 
+\hline
+feature $k$ & $\phi_k$ \\ 
+\hline
+span:rhs:src-rc:1-2 &   8.754e-14 \\
+span:rhs:src-rc:2   &   4.006e-20 \\
+span:rhs:src-lc:0-2 &   3.390e-20 \\
+span:rhs:src-lc:1-1 &   -0.514 \\
+span:rhs:tgt-lc:0-0 &   -0.531 \\
+type:translation    &   -1.387 \\
+type:deletion       &   -1.387 \\
+trans:个/one         &-4.916e-39 \\
+trans:个/a           & -4.916e-39 \\
+skip-bigram:将*你    & -4.916e-39 \\
+trans:给/me          & -4.916e-39 \\
+type:terminal       &   -2.085 \\
+type:insertion      &   -2.085 \\
+ins:i               &   -2.085 \\
+span:rhs:src:0      &   -2.085 \\
+span:lhs:tgt:2-3    &   -2.085 \\
+ins:the             &   -2.085 \\
+ins:a               &   -2.085 \\
+span:lhs:tgt:1-1    &   -2.128 \\
+span:lhs:tgt:1-2    &   -2.129 \\
+span:lhs:tgt:3      &   -21.709 \\
+span:lhs:tgt:0-3    &   -21.709 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{A selection of high-scoring features from the trained weights vector}
+\label{table:features}
+\end{table}
+
+
+
+\end{document}
+
+
+
+

@@ -8,7 +8,8 @@ from predict import predict
 
 
 savepath = '../parses/eps-40k-ml10-5trans/'
-predictpath =  'prediction/nonempty/reg/eps-40k-ml10-5trans/'
+# predictpath =  'prediction/nonempty/reg/eps-40k-ml10-5trans/'
+predictpath =  'prediction/nonempty/reg/'
 
 parses = [load_parses_separate(savepath, k) for k in range(28000)]
 
@@ -26,9 +27,9 @@ for feature in fset:
 k = 1
 minibatches = partition(cleaned_parses, k)
 w_trained, delta_ws, likelihoods = sgd_minibatches(iters=1, delta_0=100, w=w_init, minibatches=minibatches, batch_size=k, parses=cleaned_parses, 
-									  			   shuffle=True, sparse=True, scale_weight=False, regularizer=0.1, lmbda=0.001,
+									  			   shuffle=True, sparse=True, scale_weight=2, regularizer=10.0, lmbda=0.001,
 									  			   bar=True, log=False, log_last=False, check_convergence=False, 
-									  			   savepath=False, prediction=False, prediction_length=False)
+									  			   savepath=False, prediction=predictpath, prediction_length=20)
 
 print(likelihoods)
 
