@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 
 
 savepath = '../parses/eps-40k-ml10-3trans/'
-predictpath =  'prediction/experiments/'
+predictpath =  'prediction/experiments/minibatch=10/'
 
-parses = [load_parses_separate(savepath, k) for k in range(100)]
+parses = [load_parses_separate(savepath, k) for k in range(5000)]
 
 # Optional: training on parses with non-empty ref-forests.
 cleaned_parses = [(target_forest, ref_forest, src_fsa, tgt_sent) for (target_forest, ref_forest, src_fsa, tgt_sent) in parses if ref_forest][0:200]
@@ -23,7 +23,7 @@ w_init = defaultdict(float)
 for feature in fset:
     w_init[feature] = 1e-2
 
-k = 1
+k = 10
 minibatches = partition(cleaned_parses, k)
 bleu_step = 10
 

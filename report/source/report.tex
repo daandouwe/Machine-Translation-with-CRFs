@@ -69,21 +69,22 @@ Table \ref{table:hyperparams} lists the final choices of training
 
 
 \begin{table}
+{\small
 \begin{tabular}{ |l| } 
 \hline
-\textbf{C:} Chinese here! \\
+\textbf{C:} 我想订两个双人标准间。\\
 \textbf{R:} I'd like to reserve two twin rooms. \\
 \textbf{V:} My like reserve two one pair people room. \\
 \hline
-\textbf{C:} Chinese here! \\
+\textbf{C:} 你可以改改吗? \\
 \textbf{R:} Do you do alterations? \\
 \textbf{V:} You may alterations you? \\
 \hline
-\textbf{C:} Chinese here! \\
+\textbf{C:} 我想要些小龙虾。 \\
 \textbf{R:} I'd like some crayfish. \\
 \textbf{V:} My like like some smaller lobster. \\
 \hline
-\textbf{C:} Chinese here! \\
+\textbf{C:} 我这里很疼。 \\
 \textbf{R:} I have a sore pain here. \\
 \textbf{V:} My here very hurts. \\
 \hline
@@ -91,11 +92,12 @@ Table \ref{table:hyperparams} lists the final choices of training
 \textbf{R:} My's happy, green sir. \\
 \textbf{V:} Mary is not so old as henr .\\
 \hline
-\textbf{C:} Chinese here! \\
+\textbf{C:} 早餐多少钱? \\
 \textbf{R:} How much is the breakfast? \\
 \textbf{V:} Breakfast much much? \\
 \hline
 \end{tabular}
+}
 \caption{Example Viterbi-translations (V) against a reference translation (R)}
 \label{table:translations}
 \end{table}
@@ -103,20 +105,20 @@ Table \ref{table:hyperparams} lists the final choices of training
 \begin{table}
 \begin{tabular}{ |l| } 
 \hline
-\textbf{C:} Chinese here! \\
+\textbf{C:} 请把日元兑换成美元。 \\
 \textbf{R:} Can you change yen into dollars? \\
-\textbf{V:} Please my japanese change into dollar. \\
+\textbf{V:} Please my Japanese change into dollar. \\
 \textbf{I:} Please to yen exchange into dollars. \\
 \hline
-\textbf{C:} Chinese here! \\
+\textbf{C:} 嗯,没什么大问题。 \\
 \textbf{R:} Well, it's not so serious. \\
 \textbf{V:} Well, nothing big problem. \\
 \textbf{I:} Well, nothing big problem. \\
 \hline
-\textbf{C:} Chinese here! \\
-\textbf{R:} I'm on my way to chicago from minneapolis. \\
+\textbf{C:} 在从明尼亚波利斯去芝加哥的途中。 \\
+\textbf{R:} I'm on my way to Chicago from Minneapolis. \\
 \textbf{V:} In from 'm 'm go to a I. \\
-\textbf{I:} The from minneapolis minneapolis to chicago the 'm. \\
+\textbf{I:} The from minneapolis Minneapolis to Chicago the 'm. \\
 \hline 
 \end{tabular}
 \caption{Example Viterbi (V) and IBM1 heuristic translations (I) against a reference translation (R)}
@@ -171,58 +173,34 @@ Table \ref{table:hyperparams} lists the final choices of training
 {\tiny
 \begin{tabular}{ |l| }
 \hline
-a alterations you ? you \\
-i the i alter ? do \\
-your ? you a the a \\
-? you alter your a  \\
-i a i alterations ? you \\
-the the a do ? can \\
-alterations ? you can you i i the \\
-alterations you ? i the i \\
-may ? alter you a the a \\
-may do ? alter i a a \\
-i ? you may \\
-a can alter ? you your \\
-i the i may alterations ? you \\
-alter do ? can your the the the \\
-alter ? you may your a the i \\
-alterations you ? may  a \\
-alter do ? you i i i \\
-the the i your may do ? alterations \\
-i  alter you ? can you \\
-a the a may you ? alterations \\
-a do ? alterations may you \\
-the a i alterations ? can \\
-? do may your the i i \\
-your ? you can the a the \\
-? you alterations can your the the a \\
-can ? do alterations your the \\
-alterations you ? your a a i \\
-? do alterations can \\
-i a the you ? alterations you \\
-can ? do alterations your a a i \\
-your can alterations do ? \\
-the the i your may ? alter \\
-a a a ? you alter may your \\
-your ? you alterations can i a i \\
-alter you ? can your the the the \\
-? you alterations can i  \\
-may ? alterations your a a \\
-alterations you ? may a  \\
-you ? may you i the a \\
-i the i your alterations ? may \\
-your ? do alter can i the the \\
-your ? you can i a i \\
-i the the ? you alter \\
-? you your i \\
-alter you ? your i the i \\
-? do alter your the a a \\
-i  alterations ? you may \\
-? you may the the the \\
-may do ? i a \\
+a alterations you ? you & i the i alter ? do \\
+your ? you a the a & ? you alter your a  \\
+i a i alterations ? you & the the a do ? can \\
+alterations ? you can you i i the & alterations you ? i the i \\
+may ? alter you a the a & may do ? alter i a a \\
+i ? you may & a can alter ? you your \\
+i the i may alterations ? you & alter do ? can your the the the \\
+alter ? you may your a the i & alterations you ? may  a \\
+alter do ? you i i i & the the i your may do ? alterations \\
+i  alter you ? can you & a the a may you ? alterations \\
+a do ? alterations may you & the a i alterations ? can \\
+? do may your the i i & your ? you can the a the \\
+? you alterations can your the the a & can ? do alterations your the \\
+alterations you ? your a a i & ? do alterations can \\
+i a the you ? alterations you & can ? do alterations your a a i \\
+your can alterations do ? & the the i your may ? alter \\
+a a a ? you alter may your & your ? you alterations can i a i \\
+alter you ? can your the the the & ? you alterations can i  \\
+may ? alterations your a a & alterations you ? may a  \\
+you ? may you i the a & i the i your alterations ? may \\
+your ? do alter can i the the & your ? you can i a i \\
+i the the ? you alter & ? you your i \\
+alter you ? your i the i &  do alter your the a a \\
+i  alterations ? you may & ? you may the the the \\
+may do ? i a & a may ? you your \\
 \hline
 \end{tabular}}
-\caption{An impression of the massive search-space of possible translations for the sentence `CHINESE HERE'. Shown is a selection of 50 out of a total of 26.514 sentences in the target forest. Note for example that only 1.458 sentence ($<6\%$) have the question mark at the end of the sentence---the most modest requirement for a proper translation of the sentence. Viewed this way, it is quite an achievement that the trained model managed to selecte 'you may alterations you ?' as the viterbi translation.}
+\caption{An impression of the massive search-space of possible translations for the sentence `你可以改改吗?'. Shown is a selection of 50 out of a total of 26.514 sentences in the target forest. Note for example that only 1.458 sentence ($<6\%$) have the question mark at the end of the sentence---the most modest requirement for a proper translation of the sentence. Viewed this way, it is quite an achievement that the trained model managed to selecte 'you may alterations you ?' as the viterbi translation.}
 \label{table:derrivations}
 \end{table}
 
