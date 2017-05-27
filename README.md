@@ -1,5 +1,5 @@
 # Machine-Translation-with-CRFs
-Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/), in which we implement a latent-variable conditional random field for the task of translation a source sentence `x` into a target sentence `y`. Laten inversion trasnduction grammar trees mapping between `x` and `y` are constructed as the latent variables. Read the [project description](readings/project2.pdf) or the [paper](readings/Blunsom08.pdf) that partly inspired it.
+Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/), in which we implement a latent-variable conditional random field (LV-CRF) for the task of translation a source sentence `x` into a target sentence `y`. Latent inversion transduction grammar (ITG) trees mapping between `x` and `y` are constructed as the latent variables. Read the [project description](readings/project2.pdf) or the [paper](readings/Blunsom08.pdf) that partly inspired it.
 
 See the [final report](report/source/report.pdf) for our findings.
 
