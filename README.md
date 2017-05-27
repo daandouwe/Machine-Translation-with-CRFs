@@ -58,7 +58,7 @@ We have some wonderful training-set translations! The [reference translations](p
 
 * [Translations](prediction/eps-40k-ml10-3trans/saved/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans` and their [probabilities](prediction/eps-40k-ml10-3trans/viterbi-predictions-1-probs.txt). Results: `BLEU = 4.04, 45.7/7.2/2.0/0.5` (200 sentences).
 
-* [Translations](prediction/eps-40k-ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results: `BLEU = 0.00, 32.3/2.6/0.1/0.0` (200 sentences).
+* [Translations](prediction/eps-40k-ml10-5trans/saved/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results: `BLEU = 0.00, 32.3/2.6/0.1/0.0` (200 sentences).
 
 *Sampled translations*
 
@@ -70,10 +70,10 @@ We have obtained the following translations with the above trained weights. See 
 
 *Viterbi translations*
 
-* [Translations](prediction/dev/ml10-3trans/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. Results: 
+* [Translations](prediction/dev/ml10-3trans/saved/viterbi-predictions-1.txt) for `eps-40k-ml10-3trans`. Results: 
  `BLEU = 0.00, 75.6/12.5/1.5/0.2` (200 sentences). `BLEU = 0.00, 74.7/11.5/1.6/0.2` (500 sentences).
 
-* [Translations](prediction/dev/ml10-5trans/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results:
+* [Translations](prediction/dev/ml10-5trans/saved/viterbi-predictions-1.txt) for `eps-40k-ml10-5trans`. Results:
 `BLEU = 0.00, 65.4/6.4/0.4/0.0` (200 sentences) `BLEU = 0.00, 65.4/6.5/0.3/0.0` (500 sentences).
 
 *Sampled translations*
