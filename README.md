@@ -3,7 +3,7 @@ Project 2 of [NLP2](https://uva-slpl.github.io/nlp2/), in which we implement a l
 
 See the [final report](report/source/report.pdf) for our findings.
 
-![graphical-model](report/some-ideas/graphical-model.pdf)
+![graphical-model](report/some-ideas/graphical-model.png)
 
 ## Report
 
