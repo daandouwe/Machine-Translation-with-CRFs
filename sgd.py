@@ -323,14 +323,14 @@ def sgd_minibatches_bleu(iters, delta_0, w, minibatches=[], parses=[], batch_siz
             if bar and not (i==iters-1 and log_last): bar.update(k+1)
 
             # predict BLUE:
-            if k%bleu_step==0:
-                predict(parses[0:prediction_length], w, 'overwrite', prediction)
-                output = subprocess.check_output('perl multi-bleu.pl prediction/eps-40k-ml10-3trans/reference.txt < prediction/experiments/viterbi-predictions-overwrite.txt',
-                                     shell=True)
-                bleu = str(output).split()[2][0:-1]
-                bleu1 = (str(output).split()[3]).split('/')[0]
-                bleu2 = (str(output).split()[3]).split('/')[1]
-                bleu_scores.append((bleu, bleu1, bleu2))
+            # if k%bleu_step==0:
+            predict(parses[0:prediction_length], w, 'overwrite', prediction)
+            output = subprocess.check_output('perl multi-bleu.pl prediction/eps-40k-ml10-3trans/reference.txt < prediction/experiments/viterbi-predictions-overwrite.txt',
+                                 shell=True)
+            bleu = str(output).split()[2][0:-1]
+            bleu1 = (str(output).split()[3]).split('/')[0]
+            bleu2 = (str(output).split()[3]).split('/')[1]
+            bleu_scores.append((bleu, bleu1, bleu2))
 
             # hack: scale weights so that they are at most of the scale 10**scale_weight
             if scale_weight:
